@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Animals/Animals.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:AnimalsData">
+   </FileRef>
+   <FileRef
+      location = "group:AnimalsUI">
+   </FileRef>
+   <FileRef
+      location = "group:Counter/Counter.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:CounterData">
+   </FileRef>
+   <FileRef
+      location = "group:CounterUI">
+   </FileRef>
+   <FileRef
+      location = "group:Quakes/Quakes.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:QuakesData">
+   </FileRef>
+   <FileRef
+      location = "group:QuakesUI">
+   </FileRef>
+   <FileRef
+      location = "group:Services">
+   </FileRef>
+</Workspace>

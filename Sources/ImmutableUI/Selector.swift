@@ -142,6 +142,8 @@ public struct OutputSelector<State, Output>: Sendable where State: Sendable, Out
   /// - Parameter isIncluded: An optional filter to indicate this `(State, Action)` pair could change an output. Pass no filter to indicate all action values could change an output.
   /// - Parameter dependencySelector: A parameter pack of `DependencySelector` values to compute dependencies. Pass no values to indicate no dependencies should be computed.
   /// - Parameter outputSelector: An `OutputSelector` value to compute an output.
+  ///
+  /// - Tip: `Selector` reads the `com.northbronson.ImmutableUI.Debug` value from `UserDefaults`. If this value is `true` and a `label` is present, debug logging will be enabled. This can be helpful to track the computation of dependencies and outputs while events are dispatched.
   public init(
     _ keyPath: KeyPath<EnvironmentValues, Store>,
     id: some Hashable,
@@ -172,6 +174,8 @@ public struct OutputSelector<State, Output>: Sendable where State: Sendable, Out
   /// - Parameter isIncluded: An optional filter to indicate this `(State, Action)` pair could change an output. Pass no filter to indicate all action values could change an output.
   /// - Parameter dependencySelector: A parameter pack of `DependencySelector` values to compute dependencies. Pass no values to indicate no dependencies should be computed.
   /// - Parameter outputSelector: An `OutputSelector` value to compute an output.
+  ///
+  /// - Tip: `Selector` reads the `com.northbronson.ImmutableUI.Debug` value from `UserDefaults`. If this value is `true` and a `label` is present, debug logging will be enabled. This can be helpful to track the computation of dependencies and outputs while events are dispatched.
   public init(
     _ keyPath: KeyPath<EnvironmentValues, Store>,
     label: String? = nil,

@@ -18,9 +18,7 @@ The `ImmutableData` infra deploys to the following platforms:
 * visionOS 1.0+
 * watchOS 10.0+
 
-The `ImmutableData` package requires Xcode 16.0+ and macOS 14.5+.
-
-The `ImmutableData` package was tested on Xcode 16.2 and macOS 15.2.
+Building the `ImmutableData` package requires Xcode 16.0+ and macOS 14.5+.
 
 Please file a GitHub issue if you encounter any compatibility problems.
 

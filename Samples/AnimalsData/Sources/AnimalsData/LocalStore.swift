@@ -136,9 +136,13 @@ extension UUID : IncrementalStoreUUID {
   
 }
 
-final public actor LocalStore<UUID> : ModelActor, PersistentSessionPersistentStore where UUID : IncrementalStoreUUID {
-  nonisolated lazy public var modelExecutor: any ModelExecutor = {
-    let modelContext = ModelContext(self.modelContainer)
+final package actor ModelActor<UUID> : SwiftData.ModelActor where UUID : IncrementalStoreUUID {
+  package nonisolated let modelContainer: ModelContainer
+  package nonisolated let modelExecutor: any ModelExecutor
+  
+  fileprivate init(modelContainer: ModelContainer) {
+    self.modelContainer = modelContainer
+    let modelContext = ModelContext(modelContainer)
     modelContext.autosaveEnabled = false
     do {
       let count = try modelContext.fetchCount(CategoryModel.self)
@@ -162,72 +166,26 @@ final public actor LocalStore<UUID> : ModelActor, PersistentSessionPersistentSto
     } catch {
       fatalError("\(error)")
     }
-    return DefaultSerialModelExecutor(modelContext: modelContext)
-  }()
-  nonisolated public let modelContainer: ModelContainer
-  
-  private init(modelContainer: ModelContainer) {
-    self.modelContainer = modelContainer
+    self.modelExecutor = DefaultSerialModelExecutor(modelContext: modelContext)
   }
 }
 
-extension LocalStore {
-  private init(
-    schema: Schema,
-    configuration: ModelConfiguration
-  ) throws {
-    let container = try ModelContainer(
-      for: schema,
-      configurations: configuration
-    )
-    self.init(modelContainer: container)
-  }
-}
-
-extension LocalStore {
-  private static var models: Array<any PersistentModel.Type> {
-    [AnimalModel.self, CategoryModel.self]
-  }
-}
-
-extension LocalStore {
-  public init(url: URL) throws {
-    let schema = Schema(Self.models)
-    let configuration = ModelConfiguration(url: url)
-    try self.init(
-      schema: schema,
-      configuration: configuration
-    )
-  }
-}
-
-extension LocalStore {
-  public init(isStoredInMemoryOnly: Bool = false) throws {
-    let schema = Schema(Self.models)
-    let configuration = ModelConfiguration(isStoredInMemoryOnly: isStoredInMemoryOnly)
-    try self.init(
-      schema: schema,
-      configuration: configuration
-    )
-  }
-}
-
-extension LocalStore {
-  public func fetchCategoriesQuery() throws -> Array<Category> {
+extension ModelActor {
+  fileprivate func fetchCategoriesQuery() throws -> Array<Category> {
     let array = try self.modelContext.fetch(CategoryModel.self)
     return array.map { model in model.category() }
   }
 }
 
-extension LocalStore {
-  public func fetchAnimalsQuery() throws -> Array<Animal> {
+extension ModelActor {
+  fileprivate func fetchAnimalsQuery() throws -> Array<Animal> {
     let array = try self.modelContext.fetch(AnimalModel.self)
     return array.map { model in model.animal() }
   }
 }
 
-extension LocalStore {
-  public func addAnimalMutation(
+extension ModelActor {
+  fileprivate func addAnimalMutation(
     name: String,
     diet: Animal.Diet,
     categoryId: Category.ID
@@ -245,7 +203,7 @@ extension LocalStore {
   }
 }
 
-extension LocalStore {
+extension ModelActor {
   package struct Error: Swift.Error {
     package enum Code: Hashable, Sendable {
       case animalNotFound
@@ -255,8 +213,8 @@ extension LocalStore {
   }
 }
 
-extension LocalStore {
-  public func updateAnimalMutation(
+extension ModelActor {
+  fileprivate func updateAnimalMutation(
     animalId: Animal.ID,
     name: String,
     diet: Animal.Diet,
@@ -269,7 +227,7 @@ extension LocalStore {
     guard
       let model = array.first
     else {
-      throw Self.Error(code: .animalNotFound)
+      throw ModelActor.Error(code: .animalNotFound)
     }
     model.name = name
     model.diet = diet.rawValue
@@ -280,8 +238,8 @@ extension LocalStore {
   }
 }
 
-extension LocalStore {
-  public func deleteAnimalMutation(animalId: Animal.ID) throws -> Animal {
+extension ModelActor {
+  fileprivate func deleteAnimalMutation(animalId: Animal.ID) throws -> Animal {
     let predicate = #Predicate<AnimalModel> { model in
       model.animalId == animalId
     }
@@ -289,7 +247,7 @@ extension LocalStore {
     guard
       let model = array.first
     else {
-      throw Self.Error(code: .animalNotFound)
+      throw ModelActor.Error(code: .animalNotFound)
     }
     self.modelContext.delete(model)
     try self.modelContext.save()
@@ -297,8 +255,8 @@ extension LocalStore {
   }
 }
 
-extension LocalStore {
-  public func reloadSampleDataMutation() throws -> (
+extension ModelActor {
+  fileprivate func reloadSampleDataMutation() throws -> (
     animals: Array<Animal>,
     categories: Array<Category>
   ) {
@@ -337,6 +295,81 @@ extension LocalStore {
         Category.mammal,
         Category.reptile,
       ]
+    )
+  }
+}
+
+final public actor LocalStore<UUID>: PersistentSessionPersistentStore where UUID : IncrementalStoreUUID {
+  lazy package var modelActor = ModelActor<UUID>(modelContainer: self.modelContainer)
+  
+  private let modelContainer: ModelContainer
+  
+  private init(modelContainer: ModelContainer) {
+    self.modelContainer = modelContainer
+  }
+  
+  public func fetchAnimalsQuery() async throws -> Array<Animal> {
+    try await self.modelActor.fetchAnimalsQuery()
+  }
+  
+  public func addAnimalMutation(name: String, diet: Animal.Diet, categoryId: String) async throws -> Animal {
+    try await self.modelActor.addAnimalMutation(name: name, diet: diet, categoryId: categoryId)
+  }
+  
+  public func updateAnimalMutation(animalId: String, name: String, diet: Animal.Diet, categoryId: String) async throws -> Animal {
+    try await self.modelActor.updateAnimalMutation(animalId: animalId, name: name, diet: diet, categoryId: categoryId)
+  }
+  
+  public func deleteAnimalMutation(animalId: String) async throws -> Animal {
+    try await self.modelActor.deleteAnimalMutation(animalId: animalId)
+  }
+  
+  public func fetchCategoriesQuery() async throws -> Array<Category> {
+    try await self.modelActor.fetchCategoriesQuery()
+  }
+  
+  public func reloadSampleDataMutation() async throws -> (animals: Array<Animal>, categories: Array<Category>) {
+    try await self.modelActor.reloadSampleDataMutation()
+  }
+}
+
+extension LocalStore {
+  private static var models: Array<any PersistentModel.Type> {
+    [AnimalModel.self, CategoryModel.self]
+  }
+}
+
+extension LocalStore {
+  private init(
+    schema: Schema,
+    configuration: ModelConfiguration
+  ) throws {
+    let container = try ModelContainer(
+      for: schema,
+      configurations: configuration
+    )
+    self.init(modelContainer: container)
+  }
+}
+
+extension LocalStore {
+  public init(url: URL) throws {
+    let schema = Schema(Self.models)
+    let configuration = ModelConfiguration(url: url)
+    try self.init(
+      schema: schema,
+      configuration: configuration
+    )
+  }
+}
+
+extension LocalStore {
+  public init(isStoredInMemoryOnly: Bool = false) throws {
+    let schema = Schema(Self.models)
+    let configuration = ModelConfiguration(isStoredInMemoryOnly: isStoredInMemoryOnly)
+    try self.init(
+      schema: schema,
+      configuration: configuration
     )
   }
 }

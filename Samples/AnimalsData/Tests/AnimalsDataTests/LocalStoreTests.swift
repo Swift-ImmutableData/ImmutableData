@@ -99,28 +99,41 @@ final fileprivate class IncrementalStoreUUIDTestDouble : IncrementalStoreUUID {
 }
 
 extension LocalStoreTests {
-  @Test func fetchCategoriesQuery() async throws {
+  private static func makeStore() throws -> LocalStore<IncrementalStoreUUIDTestDouble> {
     let store = try LocalStore<IncrementalStoreUUIDTestDouble>(isStoredInMemoryOnly: true)
+    return store
+  }
+}
+
+extension LocalStoreTests {
+  @Test func fetchCategoriesQuery() async throws {
+    let store = try Self.makeStore()
+    let modelActor = await store.modelActor
+    
     let categories = try await store.fetchCategoriesQuery()
     #expect(TreeDictionary(categories) == Self.state.categories.data)
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test func fetchAnimalsQuery() async throws {
-    let store = try LocalStore<IncrementalStoreUUIDTestDouble>(isStoredInMemoryOnly: true)
+    let store = try Self.makeStore()
+    let modelActor = await store.modelActor
+    
     let animals = try await store.fetchAnimalsQuery()
     #expect(TreeDictionary(animals) == Self.state.animals.data)
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test func addAnimalMutation() async throws {
-    let store = try LocalStore<IncrementalStoreUUIDTestDouble>(isStoredInMemoryOnly: true)
+    let store = try Self.makeStore()
+    let modelActor = await store.modelActor
+    
     let animal = try await store.addAnimalMutation(
       name: "name",
       diet: .herbivorous,
@@ -131,7 +144,7 @@ extension LocalStoreTests {
     #expect(animal.diet == .herbivorous)
     #expect(animal.categoryId == "categoryId")
     
-    let array = try store.modelExecutor.modelContext.fetch(AnimalModel.self)
+    let array = try modelActor.modelExecutor.modelContext.fetch(AnimalModel.self)
     let animals = array.map { model in model.animal() }
     #expect(
       TreeDictionary(animals) == {
@@ -145,13 +158,15 @@ extension LocalStoreTests {
       return data
     }())
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test(arguments: Self.state.animals.data.values) func updateAnimalMutation(animal: Animal) async throws {
-    let store = try LocalStore<IncrementalStoreUUIDTestDouble>(isStoredInMemoryOnly: true)
+    let store = try Self.makeStore()
+    let modelActor = await store.modelActor
+    
     let updatedAnimal = try await store.updateAnimalMutation(
       animalId: animal.id,
       name: "name",
@@ -163,7 +178,7 @@ extension LocalStoreTests {
     #expect(updatedAnimal.diet == .herbivorous)
     #expect(updatedAnimal.categoryId == "categoryId")
     
-    let array = try store.modelExecutor.modelContext.fetch(AnimalModel.self)
+    let array = try modelActor.modelExecutor.modelContext.fetch(AnimalModel.self)
     let animals = array.map { model in model.animal() }
     #expect(
       TreeDictionary(animals) == {
@@ -177,22 +192,24 @@ extension LocalStoreTests {
       return data
     }())
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test(arguments: Self.state.animals.data.values) func updateAnimalMutationThrows(animal: Animal) async throws {
-    let store = try LocalStore<IncrementalStoreUUIDTestDouble>(isStoredInMemoryOnly: true)
+    let store = try Self.makeStore()
+    let modelActor = await store.modelActor
+    
     let animalId = animal.id
     let predicate = #Predicate<AnimalModel> { model in
       model.animalId == animalId
     }
-    try store.modelExecutor.modelContext.delete(
+    try modelActor.modelExecutor.modelContext.delete(
       model: AnimalModel.self,
       where: predicate
     )
-    try store.modelExecutor.modelContext.save()
+    try modelActor.modelExecutor.modelContext.save()
     do {
       let _ = try await store.updateAnimalMutation(
         animalId: animal.id,
@@ -202,23 +219,25 @@ extension LocalStoreTests {
       )
       #expect(false)
     } catch {
-      let error = try #require(error as? LocalStore<IncrementalStoreUUIDTestDouble>.Error)
+      let error = try #require(error as? AnimalsData.ModelActor<IncrementalStoreUUIDTestDouble>.Error)
       #expect(error.code == .animalNotFound)
     }
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test(arguments: Self.state.animals.data.values) func deleteAnimalMutation(animal: Animal) async throws {
-    let store = try LocalStore<IncrementalStoreUUIDTestDouble>(isStoredInMemoryOnly: true)
+    let store = try Self.makeStore()
+    let modelActor = await store.modelActor
+    
     let deletedAnimal = try await store.deleteAnimalMutation(
       animalId: animal.id
     )
     #expect(deletedAnimal == animal)
     
-    let array = try store.modelExecutor.modelContext.fetch(AnimalModel.self)
+    let array = try modelActor.modelExecutor.modelContext.fetch(AnimalModel.self)
     let animals = array.map { model in model.animal() }
     #expect(
       TreeDictionary(animals) == {
@@ -227,44 +246,48 @@ extension LocalStoreTests {
       return data
     }())
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test(arguments: Self.state.animals.data.values) func deleteAnimalMutationThrows(animal: Animal) async throws {
-    let store = try LocalStore<IncrementalStoreUUIDTestDouble>(isStoredInMemoryOnly: true)
+    let store = try Self.makeStore()
+    let modelActor = await store.modelActor
+    
     let animalId = animal.id
     let predicate = #Predicate<AnimalModel> { model in
       model.animalId == animalId
     }
-    try store.modelExecutor.modelContext.delete(
+    try modelActor.modelExecutor.modelContext.delete(
       model: AnimalModel.self,
       where: predicate
     )
-    try store.modelExecutor.modelContext.save()
+    try modelActor.modelExecutor.modelContext.save()
     do {
       let _ = try await store.deleteAnimalMutation(animalId: animal.id)
       #expect(false)
     } catch {
-      let error = try #require(error as? LocalStore<IncrementalStoreUUIDTestDouble>.Error)
+      let error = try #require(error as? AnimalsData.ModelActor<IncrementalStoreUUIDTestDouble>.Error)
       #expect(error.code == .animalNotFound)
     }
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test func reloadSampleDataMutation() async throws {
-    let store = try LocalStore<IncrementalStoreUUIDTestDouble>(isStoredInMemoryOnly: true)
-    store.modelExecutor.modelContext.insert(
+    let store = try Self.makeStore()
+    let modelActor = await store.modelActor
+    
+    modelActor.modelExecutor.modelContext.insert(
       CategoryModel(
         categoryId: "categoryId",
         name: "name"
       )
     )
-    store.modelExecutor.modelContext.insert(
+    modelActor.modelExecutor.modelContext.insert(
       AnimalModel(
         animalId: "animalId",
         name: "name",
@@ -272,22 +295,22 @@ extension LocalStoreTests {
         categoryId: "categoryId"
       )
     )
-    try store.modelExecutor.modelContext.save()
+    try modelActor.modelExecutor.modelContext.save()
     let (animals, categories) = try await store.reloadSampleDataMutation()
     #expect(TreeDictionary(animals) == Self.state.animals.data)
     #expect(TreeDictionary(categories) == Self.state.categories.data)
     
     do {
-      let array = try store.modelExecutor.modelContext.fetch(AnimalModel.self)
+      let array = try modelActor.modelExecutor.modelContext.fetch(AnimalModel.self)
       let animals = array.map { model in model.animal() }
       #expect(TreeDictionary(animals) == Self.state.animals.data)
     }
     do {
-      let array = try store.modelExecutor.modelContext.fetch(CategoryModel.self)
+      let array = try modelActor.modelExecutor.modelContext.fetch(CategoryModel.self)
       let categories = array.map { model in model.category() }
       #expect(TreeDictionary(categories) == Self.state.categories.data)
     }
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }

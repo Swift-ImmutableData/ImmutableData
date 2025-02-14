@@ -104,68 +104,26 @@ extension ModelContext {
   }
 }
 
-final public actor LocalStore: ModelActor, PersistentSessionLocalStore {
-  nonisolated lazy public var modelExecutor: any ModelExecutor = {
-    let modelContext = ModelContext(self.modelContainer)
-    modelContext.autosaveEnabled = false
-    return DefaultSerialModelExecutor(modelContext: modelContext)
-  }()
-  nonisolated public let modelContainer: ModelContainer
+final package actor ModelActor: SwiftData.ModelActor {
+  package nonisolated let modelContainer: ModelContainer
+  package nonisolated let modelExecutor: any ModelExecutor
   
-  private init(modelContainer: ModelContainer) {
+  fileprivate init(modelContainer: ModelContainer) {
     self.modelContainer = modelContainer
+    let modelContext = ModelContext(modelContainer)
+    modelContext.autosaveEnabled = false
+    self.modelExecutor = DefaultSerialModelExecutor(modelContext: modelContext)
   }
 }
 
-extension LocalStore {
-  private init(
-    schema: Schema,
-    configuration: ModelConfiguration
-  ) throws {
-    let container = try ModelContainer(
-      for: schema,
-      configurations: configuration
-    )
-    self.init(modelContainer: container)
-  }
-}
-
-extension LocalStore {
-  private static var models: Array<any PersistentModel.Type> {
-    [QuakeModel.self]
-  }
-}
-
-extension LocalStore {
-  public init(url: URL) throws {
-    let schema = Schema(Self.models)
-    let configuration = ModelConfiguration(url: url)
-    try self.init(
-      schema: schema,
-      configuration: configuration
-    )
-  }
-}
-
-extension LocalStore {
-  public init(isStoredInMemoryOnly: Bool = false) throws {
-    let schema = Schema(Self.models)
-    let configuration = ModelConfiguration(isStoredInMemoryOnly: isStoredInMemoryOnly)
-    try self.init(
-      schema: schema,
-      configuration: configuration
-    )
-  }
-}
-
-extension LocalStore {
-  public func fetchLocalQuakesQuery() throws -> Array<Quake> {
+extension ModelActor {
+  fileprivate func fetchLocalQuakesQuery() throws -> Array<Quake> {
     let array = try self.modelContext.fetch(QuakeModel.self)
     return array.map { model in model.quake() }
   }
 }
 
-extension LocalStore {
+extension ModelActor {
   package struct Error: Swift.Error {
     package enum Code: Equatable {
       case quakeNotFound
@@ -175,8 +133,8 @@ extension LocalStore {
   }
 }
 
-extension LocalStore {
-  public func didFetchRemoteQuakesMutation(
+extension ModelActor {
+  fileprivate func didFetchRemoteQuakesMutation(
     inserted: Array<Quake>,
     updated: Array<Quake>,
     deleted: Array<Quake>
@@ -214,8 +172,8 @@ extension LocalStore {
   }
 }
 
-extension LocalStore {
-  public func deleteLocalQuakeMutation(quakeId: Quake.ID) throws {
+extension ModelActor {
+  fileprivate func deleteLocalQuakeMutation(quakeId: Quake.ID) throws {
     let predicate = #Predicate<QuakeModel> { model in
       model.quakeId == quakeId
     }
@@ -227,9 +185,76 @@ extension LocalStore {
   }
 }
 
-extension LocalStore {
-  public func deleteLocalQuakesMutation() throws {
+extension ModelActor {
+  fileprivate func deleteLocalQuakesMutation() throws {
     try self.modelContext.delete(model: QuakeModel.self)
     try self.modelContext.save()
+  }
+}
+
+final public actor LocalStore: PersistentSessionLocalStore {
+  lazy package var modelActor = ModelActor(modelContainer: self.modelContainer)
+  
+  private let modelContainer: ModelContainer
+  
+  private init(modelContainer: ModelContainer) {
+    self.modelContainer = modelContainer
+  }
+  
+  public func fetchLocalQuakesQuery() async throws -> Array<Quake> {
+    try await self.modelActor.fetchLocalQuakesQuery()
+  }
+  
+  public func didFetchRemoteQuakesMutation(inserted: Array<Quake>, updated: Array<Quake>, deleted: Array<Quake>) async throws {
+    try await self.modelActor.didFetchRemoteQuakesMutation(inserted: inserted, updated: updated, deleted: deleted)
+  }
+  
+  public func deleteLocalQuakeMutation(quakeId: Quake.ID) async throws {
+    try await self.modelActor.deleteLocalQuakeMutation(quakeId: quakeId)
+  }
+  
+  public func deleteLocalQuakesMutation() async throws {
+    try await self.modelActor.deleteLocalQuakesMutation()
+  }
+}
+
+extension LocalStore {
+  private static var models: Array<any PersistentModel.Type> {
+    [QuakeModel.self]
+  }
+}
+
+extension LocalStore {
+  private init(
+    schema: Schema,
+    configuration: ModelConfiguration
+  ) throws {
+    let container = try ModelContainer(
+      for: schema,
+      configurations: configuration
+    )
+    self.init(modelContainer: container)
+  }
+}
+
+extension LocalStore {
+  public init(url: URL) throws {
+    let schema = Schema(Self.models)
+    let configuration = ModelConfiguration(url: url)
+    try self.init(
+      schema: schema,
+      configuration: configuration
+    )
+  }
+}
+
+extension LocalStore {
+  public init(isStoredInMemoryOnly: Bool = false) throws {
+    let schema = Schema(Self.models)
+    let configuration = ModelConfiguration(isStoredInMemoryOnly: isStoredInMemoryOnly)
+    try self.init(
+      schema: schema,
+      configuration: configuration
+    )
   }
 }

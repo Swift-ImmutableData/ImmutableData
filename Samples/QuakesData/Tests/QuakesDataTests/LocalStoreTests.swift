@@ -147,32 +147,35 @@ extension ModelContext {
 }
 
 extension LocalStoreTests {
-  static func makeStore() throws -> LocalStore {
+  private static func makeStore() async throws -> LocalStore {
     let store = try LocalStore(isStoredInMemoryOnly: true)
+    let modelActor = await store.modelActor
     for quake in Self.state.quakes.data.values {
       let model = quake.model()
-      store.modelExecutor.modelContext.insert(model)
+      modelActor.modelExecutor.modelContext.insert(model)
     }
-    try store.modelExecutor.modelContext.save()
+    try modelActor.modelExecutor.modelContext.save()
     return store
   }
 }
 
 extension LocalStoreTests {
   @Test func fetchLocalQuakesQuery() async throws {
-    let store = try Self.makeStore()
+    let store = try await Self.makeStore()
+    let modelActor = await store.modelActor
     
     let quakes = try await store.fetchLocalQuakesQuery()
     
     #expect(TreeDictionary(quakes) == Self.state.quakes.data)
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test func didFetchRemoteQuakesMutation() async throws {
-    let store = try Self.makeStore()
+    let store = try await Self.makeStore()
+    let modelActor = await store.modelActor
     
     try await store.didFetchRemoteQuakesMutation(
       inserted: [
@@ -210,7 +213,7 @@ extension LocalStoreTests {
       ]
     )
     
-    let array = try store.modelExecutor.modelContext.fetch(QuakeModel.self)
+    let array = try modelActor.modelExecutor.modelContext.fetch(QuakeModel.self)
     let quakes = array.map { model in model.quake() }
     #expect(TreeDictionary(quakes) == {
       var data = Self.state.quakes.data
@@ -236,17 +239,18 @@ extension LocalStoreTests {
       return data
     }())
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test(arguments: Self.state.quakes.data.values) func deleteLocalQuakeMutation(quake: Quake) async throws {
-    let store = try Self.makeStore()
+    let store = try await Self.makeStore()
+    let modelActor = await store.modelActor
     
     try await store.deleteLocalQuakeMutation(quakeId: quake.id)
     
-    let array = try store.modelExecutor.modelContext.fetch(QuakeModel.self)
+    let array = try modelActor.modelExecutor.modelContext.fetch(QuakeModel.self)
     let quakes = array.map { model in model.quake() }
     #expect(TreeDictionary(quakes) == {
       var data = Self.state.quakes.data
@@ -254,18 +258,19 @@ extension LocalStoreTests {
       return data
     }())
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }
 
 extension LocalStoreTests {
   @Test func deleteLocalQuakesMutation() async throws {
-    let store = try Self.makeStore()
+    let store = try await Self.makeStore()
+    let modelActor = await store.modelActor
     
     try await store.deleteLocalQuakesMutation()
     
-    #expect(try store.modelExecutor.modelContext.fetch(QuakeModel.self) == [])
+    #expect(try modelActor.modelExecutor.modelContext.fetch(QuakeModel.self) == [])
     
-    #expect(store.modelExecutor.modelContext.hasChanges == false)
+    #expect(modelActor.modelExecutor.modelContext.hasChanges == false)
   }
 }

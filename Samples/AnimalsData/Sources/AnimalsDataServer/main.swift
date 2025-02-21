@@ -17,57 +17,71 @@
 #if os(macOS)
 
 import AnimalsData
+import AsyncAlgorithms
 import Foundation
 import Vapor
 
+extension Sequence {
+  public func map<Transformed>(_ transform: @escaping @Sendable (Self.Element) async throws -> Transformed) async rethrows -> Array<Transformed> {
+    try await self.async.map(transform)
+  }
+}
+
+extension AsyncSequence {
+  fileprivate func map<Transformed>(_ transform: @escaping @Sendable (Self.Element) async throws -> Transformed) async rethrows -> Array<Transformed> {
+    let map: AsyncThrowingMapSequence = self.map(transform)
+    return try await Array(map)
+  }
+}
+
 extension LocalStore {
-  fileprivate func response(request: RemoteRequest) throws -> RemoteResponse {
+  fileprivate func response(request: RemoteRequest) async throws -> RemoteResponse {
     RemoteResponse(
-      query: try self.response(query: request.query),
-      mutation: try self.response(mutation: request.mutation)
+      query: try await self.response(query: request.query),
+      mutation: try await self.response(mutation: request.mutation)
     )
   }
 }
 
 extension LocalStore {
-  private func response(query: Array<RemoteRequest.Query>?) throws -> Array<RemoteResponse.Query>? {
-    try query?.map { query in try self.response(query: query) }
+  private func response(query: Array<RemoteRequest.Query>?) async throws -> Array<RemoteResponse.Query>? {
+    try await query?.map { query in try await self.response(query: query) }
   }
 }
 
 extension LocalStore {
-  private func response(mutation: Array<RemoteRequest.Mutation>?) throws -> Array<RemoteResponse.Mutation>? {
-    try mutation?.map { mutation in try self.response(mutation: mutation) }
+  private func response(mutation: Array<RemoteRequest.Mutation>?) async throws -> Array<RemoteResponse.Mutation>? {
+    try await mutation?.map { mutation in try await self.response(mutation: mutation) }
   }
 }
 
 extension LocalStore {
-  private func response(query: RemoteRequest.Query) throws -> RemoteResponse.Query {
+  private func response(query: RemoteRequest.Query) async throws -> RemoteResponse.Query {
     switch query {
     case .animals:
-      let animals = try self.fetchAnimalsQuery()
+      let animals = try await self.fetchAnimalsQuery()
       return .animals(animals: animals)
     case .categories:
-      let categories = try self.fetchCategoriesQuery()
+      let categories = try await self.fetchCategoriesQuery()
       return .categories(categories: categories)
     }
   }
 }
 
 extension LocalStore {
-  private func response(mutation: RemoteRequest.Mutation) throws -> RemoteResponse.Mutation {
+  private func response(mutation: RemoteRequest.Mutation) async throws -> RemoteResponse.Mutation {
     switch mutation {
     case .addAnimal(name: let name, diet: let diet, categoryId: let categoryId):
-      let animal = try self.addAnimalMutation(name: name, diet: diet, categoryId: categoryId)
+      let animal = try await self.addAnimalMutation(name: name, diet: diet, categoryId: categoryId)
       return .addAnimal(animal: animal)
     case .updateAnimal(animalId: let animalId, name: let name, diet: let diet, categoryId: let categoryId):
-      let animal = try self.updateAnimalMutation(animalId: animalId, name: name, diet: diet, categoryId: categoryId)
+      let animal = try await self.updateAnimalMutation(animalId: animalId, name: name, diet: diet, categoryId: categoryId)
       return .updateAnimal(animal: animal)
     case .deleteAnimal(animalId: let animalId):
-      let animal = try self.deleteAnimalMutation(animalId: animalId)
+      let animal = try await self.deleteAnimalMutation(animalId: animalId)
       return .deleteAnimal(animal: animal)
     case .reloadSampleData:
-      let (animals, categories) = try self.reloadSampleDataMutation()
+      let (animals, categories) = try await self.reloadSampleDataMutation()
       return .reloadSampleData(animals: animals, categories: categories)
     }
   }

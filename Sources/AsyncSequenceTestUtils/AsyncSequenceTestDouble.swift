@@ -31,14 +31,14 @@ extension AsyncSequenceTestDouble {
 }
 
 extension AsyncSequenceTestDouble {
-  final public actor Iterator : AsyncIteratorProtocol {
+  final public actor Iterator {
     private var nextQueue = Array<CheckedContinuation<Element?, Never>>()
     private var sendQueue = Array<CheckedContinuation<Void, Never>>()
     private var isCancelled = false
   }
 }
 
-extension AsyncSequenceTestDouble.Iterator {
+extension AsyncSequenceTestDouble.Iterator: AsyncIteratorProtocol {
   public func next() async throws -> Element? {
     if self.sendQueue.isEmpty == false {
       self.sendQueue.removeFirst().resume()

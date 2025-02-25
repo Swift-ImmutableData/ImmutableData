@@ -114,18 +114,14 @@ extension QuakesStateTests {
     partialKeyPath: PartialKeyPath<Quake> & Sendable,
     order: SortOrder
   ) {
-    func keyPath<Root, Value>(_ partialKeyPath: PartialKeyPath<Root>, valueType: Value.Type) -> KeyPath<Root, Value> & Sendable where Value : Comparable {
-      partialKeyPath as! KeyPath<Root, Value> & Sendable
-    }
-    func body<Value>(_: Value.Type) -> Value.Type {
-      Value.self
-    }
-    func test(
+    func test<Value>(
       searchText: String,
       searchDate: Date,
-      sort keyPath: KeyPath<Quake, some Comparable> & Sendable,
+      sort partialKeyPath: PartialKeyPath<Quake> & Sendable,
+      valueType: Value.Type,
       order: SortOrder
-    ) {
+    ) where Value : Comparable {
+      let keyPath = partialKeyPath as! KeyPath<Quake, Value> & Sendable
       let state = Self.state
       let values = QuakesState.selectQuakesValues(
         searchText: searchText,
@@ -157,11 +153,11 @@ extension QuakesStateTests {
       )
     }
     let valueType = type(of: partialKeyPath).valueType as! any Comparable.Type
-    let keyPath = keyPath(partialKeyPath, valueType: _openExistential(valueType, do: body))
     test(
       searchText: searchText,
       searchDate: searchDate,
-      sort: keyPath,
+      sort: partialKeyPath,
+      valueType: valueType,
       order: order
     )
   }

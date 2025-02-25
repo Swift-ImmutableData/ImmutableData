@@ -227,7 +227,7 @@ extension ModelActor {
     guard
       let model = array.first
     else {
-      throw ModelActor.Error(code: .animalNotFound)
+      throw Self.Error(code: .animalNotFound)
     }
     model.name = name
     model.diet = diet.rawValue
@@ -247,7 +247,7 @@ extension ModelActor {
     guard
       let model = array.first
     else {
-      throw ModelActor.Error(code: .animalNotFound)
+      throw Self.Error(code: .animalNotFound)
     }
     self.modelContext.delete(model)
     try self.modelContext.save()
@@ -299,43 +299,13 @@ extension ModelActor {
   }
 }
 
-final public actor LocalStore<UUID>: PersistentSessionPersistentStore where UUID : IncrementalStoreUUID {
+final public actor LocalStore<UUID> where UUID : IncrementalStoreUUID {
   lazy package var modelActor = ModelActor<UUID>(modelContainer: self.modelContainer)
   
   private let modelContainer: ModelContainer
   
   private init(modelContainer: ModelContainer) {
     self.modelContainer = modelContainer
-  }
-  
-  public func fetchAnimalsQuery() async throws -> Array<Animal> {
-    try await self.modelActor.fetchAnimalsQuery()
-  }
-  
-  public func addAnimalMutation(name: String, diet: Animal.Diet, categoryId: String) async throws -> Animal {
-    try await self.modelActor.addAnimalMutation(name: name, diet: diet, categoryId: categoryId)
-  }
-  
-  public func updateAnimalMutation(animalId: String, name: String, diet: Animal.Diet, categoryId: String) async throws -> Animal {
-    try await self.modelActor.updateAnimalMutation(animalId: animalId, name: name, diet: diet, categoryId: categoryId)
-  }
-  
-  public func deleteAnimalMutation(animalId: String) async throws -> Animal {
-    try await self.modelActor.deleteAnimalMutation(animalId: animalId)
-  }
-  
-  public func fetchCategoriesQuery() async throws -> Array<Category> {
-    try await self.modelActor.fetchCategoriesQuery()
-  }
-  
-  public func reloadSampleDataMutation() async throws -> (animals: Array<Animal>, categories: Array<Category>) {
-    try await self.modelActor.reloadSampleDataMutation()
-  }
-}
-
-extension LocalStore {
-  private static var models: Array<any PersistentModel.Type> {
-    [AnimalModel.self, CategoryModel.self]
   }
 }
 
@@ -349,6 +319,12 @@ extension LocalStore {
       configurations: configuration
     )
     self.init(modelContainer: container)
+  }
+}
+
+extension LocalStore {
+  private static var models: Array<any PersistentModel.Type> {
+    [AnimalModel.self, CategoryModel.self]
   }
 }
 
@@ -371,5 +347,52 @@ extension LocalStore {
       schema: schema,
       configuration: configuration
     )
+  }
+}
+
+extension LocalStore: PersistentSessionPersistentStore {
+  public func fetchAnimalsQuery() async throws -> Array<Animal> {
+    try await self.modelActor.fetchAnimalsQuery()
+  }
+  
+  public func addAnimalMutation(
+    name: String,
+    diet: Animal.Diet,
+    categoryId: String
+  ) async throws -> Animal {
+    try await self.modelActor.addAnimalMutation(
+      name: name,
+      diet: diet,
+      categoryId: categoryId
+    )
+  }
+  
+  public func updateAnimalMutation(
+    animalId: String,
+    name: String,
+    diet: Animal.Diet,
+    categoryId: String
+  ) async throws -> Animal {
+    try await self.modelActor.updateAnimalMutation(
+      animalId: animalId,
+      name: name,
+      diet: diet,
+      categoryId: categoryId
+    )
+  }
+  
+  public func deleteAnimalMutation(animalId: String) async throws -> Animal {
+    try await self.modelActor.deleteAnimalMutation(animalId: animalId)
+  }
+  
+  public func fetchCategoriesQuery() async throws -> Array<Category> {
+    try await self.modelActor.fetchCategoriesQuery()
+  }
+  
+  public func reloadSampleDataMutation() async throws -> (
+    animals: Array<Animal>,
+    categories: Array<Category>
+  ) {
+    try await self.modelActor.reloadSampleDataMutation()
   }
 }

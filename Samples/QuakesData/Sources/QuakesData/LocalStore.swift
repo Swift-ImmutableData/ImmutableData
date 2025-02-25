@@ -192,35 +192,13 @@ extension ModelActor {
   }
 }
 
-final public actor LocalStore: PersistentSessionLocalStore {
+final public actor LocalStore {
   lazy package var modelActor = ModelActor(modelContainer: self.modelContainer)
   
   private let modelContainer: ModelContainer
   
   private init(modelContainer: ModelContainer) {
     self.modelContainer = modelContainer
-  }
-  
-  public func fetchLocalQuakesQuery() async throws -> Array<Quake> {
-    try await self.modelActor.fetchLocalQuakesQuery()
-  }
-  
-  public func didFetchRemoteQuakesMutation(inserted: Array<Quake>, updated: Array<Quake>, deleted: Array<Quake>) async throws {
-    try await self.modelActor.didFetchRemoteQuakesMutation(inserted: inserted, updated: updated, deleted: deleted)
-  }
-  
-  public func deleteLocalQuakeMutation(quakeId: Quake.ID) async throws {
-    try await self.modelActor.deleteLocalQuakeMutation(quakeId: quakeId)
-  }
-  
-  public func deleteLocalQuakesMutation() async throws {
-    try await self.modelActor.deleteLocalQuakesMutation()
-  }
-}
-
-extension LocalStore {
-  private static var models: Array<any PersistentModel.Type> {
-    [QuakeModel.self]
   }
 }
 
@@ -234,6 +212,12 @@ extension LocalStore {
       configurations: configuration
     )
     self.init(modelContainer: container)
+  }
+}
+
+extension LocalStore {
+  private static var models: Array<any PersistentModel.Type> {
+    [QuakeModel.self]
   }
 }
 
@@ -256,5 +240,31 @@ extension LocalStore {
       schema: schema,
       configuration: configuration
     )
+  }
+}
+
+extension LocalStore: PersistentSessionLocalStore {
+  public func fetchLocalQuakesQuery() async throws -> Array<Quake> {
+    try await self.modelActor.fetchLocalQuakesQuery()
+  }
+  
+  public func didFetchRemoteQuakesMutation(
+    inserted: Array<Quake>,
+    updated: Array<Quake>,
+    deleted: Array<Quake>
+  ) async throws {
+    try await self.modelActor.didFetchRemoteQuakesMutation(
+      inserted: inserted,
+      updated: updated,
+      deleted: deleted
+    )
+  }
+  
+  public func deleteLocalQuakeMutation(quakeId: Quake.ID) async throws {
+    try await self.modelActor.deleteLocalQuakeMutation(quakeId: quakeId)
+  }
+  
+  public func deleteLocalQuakesMutation() async throws {
+    try await self.modelActor.deleteLocalQuakesMutation()
   }
 }

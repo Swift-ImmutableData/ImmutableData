@@ -3,7 +3,7 @@
 set -euox pipefail
 
 main() {
-  toolchains="Xcode_16 Xcode_16.1 Xcode_16.2 Xcode_16.3_beta"
+  local toolchains="Xcode_16 Xcode_16.1 Xcode_16.2 Xcode_16.3_beta"
   
   for toolchain in $toolchains; do
     sudo xcode-select --switch /Applications/${toolchain}.app

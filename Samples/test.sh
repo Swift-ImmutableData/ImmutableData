@@ -1,22 +1,17 @@
-#!/bin/bash
+#!/bin/sh
 
 set -euox pipefail
 
-build() {
-  local package_path="$1"
+package() {
+  local subcommand="$1"
+  local package_path="$2"
   
   swift package --package-path ${package_path} reset
   swift package --package-path ${package_path} resolve
-  swift build --package-path ${package_path}
-}
-
-test() {
-  local package_path="$1"
-  
-  swift package --package-path ${package_path} reset
-  swift package --package-path ${package_path} resolve
-  swift build --package-path ${package_path}
-  swift test --package-path ${package_path}
+  swift ${subcommand} --package-path ${package_path} --configuration debug
+  swift package --package-path ${package_path} clean
+  swift ${subcommand} --package-path ${package_path} --configuration release
+  swift package --package-path ${package_path} clean
 }
 
 main() {
@@ -25,13 +20,13 @@ main() {
   for toolchain in $toolchains; do
     sudo xcode-select --switch /Applications/${toolchain}.app
     swift --version
-    test AnimalsData
-    build AnimalsUI
-    test CounterData
-    build CounterUI
-    test QuakesData
-    build QuakesUI
-    test Services
+    package test AnimalsData
+    package build AnimalsUI
+    package test CounterData
+    package build CounterUI
+    package test QuakesData
+    package build QuakesUI
+    package test Services
   done
   
   sudo xcode-select --reset

@@ -1,4 +1,4 @@
-name: ImmutableData
+name: ImmutableData Tests
 
 permissions:
   contents: read

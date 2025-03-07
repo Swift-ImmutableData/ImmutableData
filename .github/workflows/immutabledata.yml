@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Run tests
         run: |
-          curl -s https://raw.githubusercontent.com/vanvoorden/ImmutableData/refs/heads/main/test.sh | sh
+          curl -s https://raw.githubusercontent.com/Swift-ImmutableData/ImmutableData/refs/heads/main/test.sh | sh
   product_tests:
     name: Product Tests
     runs-on: macos-15
@@ -33,4 +33,4 @@ jobs:
       - name: Run tests
         run: |
           cd Samples
-          curl -s https://raw.githubusercontent.com/vanvoorden/ImmutableData/refs/heads/main/Samples/test.sh | sh
+          curl -s https://raw.githubusercontent.com/Swift-ImmutableData/ImmutableData/refs/heads/main/Samples/test.sh | sh

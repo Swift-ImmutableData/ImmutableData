@@ -1,5 +1,7 @@
 # ImmutableData 0.2.0
 
+[![ImmutableData Tests](https://github.com/Swift-ImmutableData/ImmutableData/actions/workflows/immutabledata.yml/badge.svg?branch=main)](https://github.com/Swift-ImmutableData/ImmutableData/actions/workflows/immutabledata.yml)
+
 Easy State Management for SwiftUI Apps
 
 ## Background

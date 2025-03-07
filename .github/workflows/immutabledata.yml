@@ -1,0 +1,36 @@
+name: ImmutableData
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
+      - 'release/**'
+
+jobs:
+  infra_tests:
+    name: Infra Tests
+    runs-on: macos-15
+    steps:
+      - name: Run checkout
+        uses: actions/checkout@v4
+      - name: Run tests
+        run: |
+          curl -s https://raw.githubusercontent.com/vanvoorden/ImmutableData/refs/heads/main/test.sh | sh
+  product_tests:
+    name: Product Tests
+    runs-on: macos-15
+    steps:
+      - name: Run checkout
+        uses: actions/checkout@v4
+      - name: Run tests
+        run: |
+          cd Samples
+          curl -s https://raw.githubusercontent.com/vanvoorden/ImmutableData/refs/heads/main/Samples/test.sh | sh

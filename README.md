@@ -1,6 +1,7 @@
 # ImmutableData 0.2.0
 
-[![ImmutableData Tests](https://github.com/Swift-ImmutableData/ImmutableData/actions/workflows/immutabledata.yml/badge.svg?branch=main)](https://github.com/Swift-ImmutableData/ImmutableData/actions/workflows/immutabledata.yml)
+[![Builds](https://github.com/Swift-ImmutableData/ImmutableData/actions/workflows/builds.yml/badge.svg?branch=main)](https://github.com/Swift-ImmutableData/ImmutableData/actions/workflows/builds.yml)
+[![Tests](https://github.com/Swift-ImmutableData/ImmutableData/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/Swift-ImmutableData/ImmutableData/actions/workflows/tests.yml)
 
 Easy State Management for SwiftUI Apps
 

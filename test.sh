@@ -14,11 +14,10 @@ function package() {
 }
 
 function main() {
-  local toolchains="Xcode_16 Xcode_16.1 Xcode_16.2"
+  local versions="16.0 16.1 16.2 16.3"
   
-  for toolchain in ${toolchains}; do
-    export DEVELOPER_DIR="/Applications/${toolchain}.app"
-    swift --version
+  for version in ${versions}; do
+    export DEVELOPER_DIR="/Applications/Xcode_${version}.app"
     package test
   done
 }

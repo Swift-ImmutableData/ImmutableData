@@ -128,11 +128,11 @@ public struct OutputSelector<State, Output>: Sendable where State: Sendable, Out
   @Environment private var store: Store
   @State private var listener: Listener<Store.State, Store.Action, repeat each Dependency, Output>
   
-  private let id: AnyHashable?
-  private let label: String?
-  private let filter: (@Sendable (Store.State, Store.Action) -> Bool)?
-  private let dependencySelector: (repeat DependencySelector<Store.State, each Dependency>)
-  private let outputSelector: OutputSelector<Store.State, Output>
+  private var id: AnyHashable?
+  private var label: String?
+  private var filter: (@Sendable (Store.State, Store.Action) -> Bool)?
+  private var dependencySelector: (repeat DependencySelector<Store.State, each Dependency>)
+  private var outputSelector: OutputSelector<Store.State, Output>
   
   /// Constructs a `Selector`.
   ///
@@ -224,5 +224,55 @@ extension Selector: @preconcurrency DynamicProperty {
       )
     }
     self.listener.listen(to: self.store)
+  }
+}
+
+extension Selector {
+  /// Updates a `Selector`.
+  ///
+  /// - Parameter id: A `Hashable` value to indicate the identity of this `Selector`.
+  /// - Parameter label: An optional `String` value used for debug logging.
+  /// - Parameter isIncluded: An optional filter to indicate this `(State, Action)` pair could change an output. Pass no filter to indicate all action values could change an output.
+  /// - Parameter dependencySelector: A `DependencySelector` value to compute a dependency.
+  /// - Parameter outputSelector: An `OutputSelector` value to compute an output.
+  ///
+  /// - Tip: `Selector` reads the `com.northbronson.ImmutableUI.Debug` value from `UserDefaults`. If this value is `true` and a `label` is present, debug logging will be enabled. This can be helpful to track the computation of dependencies and outputs while events are dispatched.
+  public mutating func update(
+    id: some Hashable,
+    label: String? = nil,
+    filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
+    dependencySelector: repeat DependencySelector<Store.State, each Dependency>,
+    outputSelector: OutputSelector<Store.State, Output>
+  ) {
+    self.id = AnyHashable(id)
+    self.label = label
+    self.filter = isIncluded
+    self.dependencySelector = (repeat each dependencySelector)
+    self.outputSelector = outputSelector
+    self.update()
+  }
+}
+
+extension Selector {
+  /// Updates a `Selector`.
+  ///
+  /// - Parameter label: An optional `String` value used for debug logging.
+  /// - Parameter isIncluded: An optional filter to indicate this `(State, Action)` pair could change an output. Pass no filter to indicate all action values could change an output.
+  /// - Parameter dependencySelector: A `DependencySelector` value to compute a dependency.
+  /// - Parameter outputSelector: An `OutputSelector` value to compute an output.
+  ///
+  /// - Tip: `Selector` reads the `com.northbronson.ImmutableUI.Debug` value from `UserDefaults`. If this value is `true` and a `label` is present, debug logging will be enabled. This can be helpful to track the computation of dependencies and outputs while events are dispatched.
+  public mutating func update(
+    label: String? = nil,
+    filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
+    dependencySelector: repeat DependencySelector<Store.State, each Dependency>,
+    outputSelector: OutputSelector<Store.State, Output>
+  ) {
+    self.id = nil
+    self.label = label
+    self.filter = isIncluded
+    self.dependencySelector = (repeat each dependencySelector)
+    self.outputSelector = outputSelector
+    self.update()
   }
 }

@@ -1,41 +1,28 @@
 name: Samples Builds
-
-permissions:
-  contents: read
-
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-      - 'release/**'
   pull_request:
     branches:
       - main
-      - 'release/**'
-
+      - "release/**"
+  push:
+    branches:
+      - main
+      - "release/**"
+  workflow_dispatch:
+permissions:
+  contents: read
 jobs:
-  tests:
+  macos:
     name: Xcode ${{ matrix.xcode-version }} / ${{ matrix.configuration }}
     runs-on: macos-15
-    strategy:
-      matrix:
-        xcode-version: [
-          '16.0',
-          '16.1',
-          '16.2',
-          '16.3',
-        ]
-        configuration: [
-          'debug',
-          'release',
-        ]
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode-version }}.app
     steps:
       - name: Run checkout
         uses: actions/checkout@v4
       - name: Run builds
         run: |
-          export DEVELOPER_DIR="/Applications/Xcode_${{ matrix.xcode-version }}.app"
+          swift --version
           swift build --package-path Samples/AnimalsData --configuration ${{ matrix.configuration }}
           swift build --package-path Samples/AnimalsUI --configuration ${{ matrix.configuration }}
           swift build --package-path Samples/CounterData --configuration ${{ matrix.configuration }}
@@ -43,3 +30,14 @@ jobs:
           swift build --package-path Samples/QuakesData --configuration ${{ matrix.configuration }}
           swift build --package-path Samples/QuakesUI --configuration ${{ matrix.configuration }}
           swift build --package-path Samples/Services --configuration ${{ matrix.configuration }}
+    strategy:
+      matrix:
+        xcode-version:
+          - "16.0"
+          - "16.1"
+          - "16.2"
+          - "16.3"
+        configuration:
+          - debug
+          - release
+      fail-fast: false

@@ -29,7 +29,7 @@ Further, avoiding complexity like two-way data bindings, or the spaghetti engend
 
 ## Support for Legacy Platforms
 
-`ImmutableData-Legacy` is a subset of the functionality in our original `ImmutableData` project. Some of the changes — like migrating from `Observable` to `Combine` when notifying components that Selector Outputs have changed — are implementation details that should not affect how product engineers build components. The biggest change to our *interface* — the `public` API that product engineers need — is that Selectors only accept single Dependency Selectors. We do not support variadic types in this version of our infra.
+[`ImmutableData-Legacy`](https://github.com/Swift-ImmutableData/ImmutableData-Legacy) is a subset of the functionality in our original `ImmutableData` project. Some of the changes — like migrating from `Observable` to `Combine` when notifying components that Selector Outputs have changed — are implementation details that should not affect how product engineers build components. The biggest change to our *interface* — the `public` API that product engineers need — is that Selectors only accept single Dependency Selectors. We do not support variadic types in this version of our infra.
 
 ## Requirements
 

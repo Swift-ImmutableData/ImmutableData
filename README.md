@@ -53,9 +53,17 @@ dependencies: [
 ],
 targets: [
     .target(
-        name: "MyTarget",
+        name: "MyApp",
         dependencies: [
-            "ImmutableData",
+            "MyAppCore",
+            .product(name: "ImmutableUI", package: "ImmutableData"),
+            .product(name: "ImmutableData", package: "ImmutableData"),
+        ]
+    ),
+    .target(
+        name: "MyAppCore",
+        dependencies: [
+            .product(name: "ImmutableData", package: "ImmutableData"),
         ]
     ),
 ]

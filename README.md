@@ -45,6 +45,22 @@ Building the `ImmutableData` package requires Xcode 16.0+ and macOS 14.5+.
 
 Please file a GitHub issue if you encounter any compatibility problems.
 
+## Installation
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/Swift-ImmutableData/ImmutableData", branch: "main")
+],
+targets: [
+    .target(
+        name: "MyTarget",
+        dependencies: [
+            "ImmutableData",
+        ]
+    ),
+]
+```
+
 ## Usage
 
 The `ImmutableData` package makes three library modules available to your products:

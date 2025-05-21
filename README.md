@@ -72,7 +72,7 @@ let package = Package(
     .macCatalyst(.v17),
   ],
   dependencies: [
-    .package(url: "https://github.com/Swift-ImmutableData/ImmutableData", branch: "main")
+    .package(url: "https://github.com/Swift-ImmutableData/ImmutableData", from: "0.3.0")
   ],
   targets: [
     .target(

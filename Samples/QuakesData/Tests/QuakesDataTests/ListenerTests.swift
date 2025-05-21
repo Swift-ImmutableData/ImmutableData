@@ -163,7 +163,7 @@ final fileprivate class DidFetchRemoteQuakesMutationLocalStoreTestDouble : @unch
 }
 
 extension StoreTestDouble : ImmutableData.Dispatcher {
-  func dispatch(action: Action) throws {
+  func dispatch(action: Action) throws(QuakesReducer.Error) {
     self.parameterAction.append(action)
   }
   

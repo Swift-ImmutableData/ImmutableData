@@ -39,7 +39,7 @@ extension ImmutableUI.Selector {
     filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
     dependencySelector: repeat @escaping @Sendable (Store.State) -> each Dependency,
     outputSelector: @escaping @Sendable (Store.State) -> Output
-  ) where Store == ImmutableData.Store<QuakesState, QuakesAction>, repeat each Dependency : Equatable, Output : Equatable {
+  ) where Store == ImmutableData.Store<QuakesState, QuakesAction, QuakesReducer.Error>, repeat each Dependency : Equatable, Output : Equatable {
     self.init(
        id: id,
        label: label,
@@ -56,7 +56,7 @@ extension ImmutableUI.Selector {
     filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
     dependencySelector: repeat @escaping @Sendable (Store.State) -> each Dependency,
     outputSelector: @escaping @Sendable (Store.State) -> Output
-  ) where Store == ImmutableData.Store<QuakesState, QuakesAction>, repeat each Dependency : Equatable, Output : Equatable {
+  ) where Store == ImmutableData.Store<QuakesState, QuakesAction, QuakesReducer.Error>, repeat each Dependency : Equatable, Output : Equatable {
     self.init(
        label: label,
        filter: isIncluded,
@@ -67,7 +67,7 @@ extension ImmutableUI.Selector {
 }
 
 @MainActor @propertyWrapper struct SelectQuakes: DynamicProperty {
-  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction>, TreeDictionary<Quake.ID, Quake>> var wrappedValue: TreeDictionary<Quake.ID, Quake>
+  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction, QuakesReducer.Error>, TreeDictionary<Quake.ID, Quake>> var wrappedValue: TreeDictionary<Quake.ID, Quake>
   
   init(
     searchText: String,
@@ -96,7 +96,7 @@ extension SelectQuakes {
 }
 
 @MainActor @propertyWrapper struct SelectQuakesValues: DynamicProperty {
-  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction>, TreeDictionary<Quake.ID, Quake>, Array<Quake>> var wrappedValue: Array<Quake>
+  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction, QuakesReducer.Error>, TreeDictionary<Quake.ID, Quake>, Array<Quake>> var wrappedValue: Array<Quake>
   
   init(
     searchText: String,
@@ -137,7 +137,7 @@ extension SelectQuakesValues {
 }
 
 @MainActor @propertyWrapper struct SelectQuakesCount: DynamicProperty {
-  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction>, Int>(
+  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction, QuakesReducer.Error>, Int>(
     label: "SelectQuakesCount",
     outputSelector: QuakesState.selectQuakesCount()
   ) var wrappedValue: Int
@@ -148,7 +148,7 @@ extension SelectQuakesValues {
 }
 
 @MainActor @propertyWrapper struct SelectQuakesStatus: DynamicProperty {
-  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction>, Status?>(
+  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction, QuakesReducer.Error>, Status?>(
     label: "SelectQuakesStatus",
     outputSelector: QuakesState.selectQuakesStatus()
   ) var wrappedValue: Status?
@@ -159,7 +159,7 @@ extension SelectQuakesValues {
 }
 
 @MainActor @propertyWrapper struct SelectQuake: DynamicProperty {
-  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction>, Quake?> var wrappedValue: Quake?
+  @ImmutableUI.Selector<ImmutableData.Store<QuakesState, QuakesAction, QuakesReducer.Error>, Quake?> var wrappedValue: Quake?
   
   init(quakeId: String?) {
     self._wrappedValue = ImmutableUI.Selector(

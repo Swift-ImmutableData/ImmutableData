@@ -102,6 +102,8 @@ let package = Package(
 )
 ```
 
+If you use Xcode to manage your app's dependencies, see [how to add package dependencies to your app](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app) and use this package URL: `https://github.com/Swift-ImmutableData/ImmutableData`.
+
 A very basic “Hello World” application would be a Counter: a SwiftUI application to increment and decrement an integer value.
 
 We begin with the data models of our Counter application:

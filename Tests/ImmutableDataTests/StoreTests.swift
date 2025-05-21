@@ -20,8 +20,10 @@ import Testing
 
 //  https://github.com/swiftlang/swift/issues/74882
 
-final fileprivate class Error : Swift.Error {
-  
+final fileprivate class Error : Swift.Error, Equatable {
+  static func == (lhs: Error, rhs: Error) -> Bool {
+    lhs === rhs
+  }
 }
 
 final fileprivate class StateTestDouble : Sendable {
@@ -108,8 +110,9 @@ extension StoreTests {
 
 extension StoreTests {
   @Test func dispatchActionThrowsError() async throws {
-    self.reducer.returnError = Error()
-    
+    let error = Error()
+    self.reducer.returnError = error
+
     let store = await Store(
       initialState: self.state,
       reducer: self.reducer.reduce
@@ -119,15 +122,11 @@ extension StoreTests {
     #expect(self.reducer.parameterAction == nil)
     
     #expect(await store.state === self.state)
-    
-    do {
+
+    await #expect(throws: error) {
       try await store.dispatch(action: self.action)
-      #expect(false)
-    } catch {
-      let error = try #require(error as? Error)
-      #expect(error === self.reducer.returnError)
     }
-    
+
     #expect(self.reducer.parameterState === self.state)
     #expect(self.reducer.parameterAction === self.action)
     
@@ -158,8 +157,9 @@ extension StoreTests {
 
 extension StoreTests {
   @Test func dispatchThunkThrowsError() async throws {
-    self.thunk.returnError = Error()
-    
+    let error = Error()
+    self.thunk.returnError = error
+
     let store = await Store(
       initialState: self.state,
       reducer: self.reducer.reduce
@@ -169,13 +169,9 @@ extension StoreTests {
     #expect(self.reducer.parameterAction == nil)
     
     #expect(await store.state === self.state)
-    
-    do {
+
+    await #expect(throws: error) {
       try await store.dispatch(thunk: self.thunk.thunk)
-      #expect(false)
-    } catch {
-      let error = try #require(error as? Error)
-      #expect(error === self.thunk.returnError)
     }
     
     #expect(self.reducer.parameterState == nil)
@@ -220,8 +216,9 @@ extension StoreTests {
 
 extension StoreTests {
   @Test func dispatchAsyncThunkThrowsError() async throws {
-    self.thunk.returnError = Error()
-    
+    let error = Error()
+    self.thunk.returnError = error
+
     let store = await Store(
       initialState: self.state,
       reducer: self.reducer.reduce
@@ -231,13 +228,9 @@ extension StoreTests {
     #expect(self.reducer.parameterAction == nil)
     
     #expect(await store.state === self.state)
-    
-    do {
+
+    await #expect(throws: error) {
       try await store.dispatch(thunk: self.thunk.asyncThunk)
-      #expect(false)
-    } catch {
-      let error = try #require(error as? Error)
-      #expect(error === self.thunk.returnError)
     }
     
     #expect(self.reducer.parameterState == nil)

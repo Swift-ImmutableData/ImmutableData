@@ -45,30 +45,6 @@ Building the `ImmutableData` package requires Xcode 16.0+ and macOS 14.5+.
 
 Please file a GitHub issue if you encounter any compatibility problems.
 
-## Installation
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/Swift-ImmutableData/ImmutableData", branch: "main")
-],
-targets: [
-    .target(
-        name: "MyApp",
-        dependencies: [
-            "MyAppCore",
-            .product(name: "ImmutableUI", package: "ImmutableData"),
-            .product(name: "ImmutableData", package: "ImmutableData"),
-        ]
-    ),
-    .target(
-        name: "MyAppCore",
-        dependencies: [
-            .product(name: "ImmutableData", package: "ImmutableData"),
-        ]
-    ),
-]
-```
-
 ## Usage
 
 The `ImmutableData` package makes three library modules available to your products:
@@ -78,6 +54,53 @@ The `ImmutableData` package makes three library modules available to your produc
 * `AsyncSequenceTestUtils`: This module helps us write predictable and deterministic tests for certain asynchronous operations. This is *not* intended to ship as a dependency in your production code — this is *only* intended for test code.
 
 [*The ImmutableData Programming Guide*][idpg] presents complete sample application product tutorials. This is the recommended way to learn how to build products with `ImmutableData`.
+
+Start by importing the `ImmutableData` package as a dependency. Here is an example from Swift Package Manager:
+
+```swift
+// swift-tools-version: 6.0
+
+import PackageDescription
+
+let package = Package(
+  name: "MyPackage",
+  platforms: [
+    .macOS(.v14),
+    .iOS(.v17),
+    .tvOS(.v17),
+    .watchOS(.v10),
+    .macCatalyst(.v17),
+  ],
+  dependencies: [
+    .package(url: "https://github.com/Swift-ImmutableData/ImmutableData", branch: "main")
+  ],
+  targets: [
+    .target(
+      name: "MyApp",
+      dependencies: [
+        "MyAppCore",
+        .product(
+          name: "ImmutableUI", 
+          package: "ImmutableData"
+        ),
+        .product(
+          name: "ImmutableData", 
+          package: "ImmutableData"
+        ),
+      ]
+    ),
+    .target(
+      name: "MyAppCore",
+      dependencies: [
+        .product(
+          name: "ImmutableData", 
+          package: "ImmutableData"
+        ),
+      ]
+    ),
+  ]
+)
+```
 
 A very basic “Hello World” application would be a Counter: a SwiftUI application to increment and decrement an integer value.
 

@@ -55,6 +55,48 @@ The `ImmutableData` package makes three library modules available to your produc
 
 *The ImmutableData Programming Guide* presents complete sample application product tutorials. This is the recommended way to learn how to build products with `ImmutableData`.
 
+Start by importing the `ImmutableData` package as a dependency. Here is an example from Swift Package Manager:
+
+```swift
+// swift-tools-version: 6.0
+
+import PackageDescription
+
+let package = Package(
+  name: "MyPackage",
+  platforms: [
+    .macOS(.v14),
+    .iOS(.v17),
+    .tvOS(.v17),
+    .watchOS(.v10),
+    .macCatalyst(.v17),
+  ],
+  dependencies: [
+    .package(
+      url: "https://github.com/Swift-ImmutableData/ImmutableData",
+      from: "0.3.0"
+    )
+  ],
+  targets: [
+    .target(
+      name: "MyPackage",
+      dependencies: [
+        .product(
+          name: "ImmutableData",
+          package: "ImmutableData"
+        ),
+        .product(
+          name: "ImmutableUI",
+          package: "ImmutableData"
+        ),
+      ]
+    )
+  ]
+)
+```
+
+If you use Xcode to manage your app’s dependencies, Apple publishes documentation with steps you can follow to add `ImmutableData` directly through Xcode.[^2]
+
 A very basic “Hello World” application would be a Counter: a SwiftUI application to increment and decrement an integer value.
 
 We begin with the data models of our Counter application:
@@ -206,3 +248,4 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
 [^1]: https://developer.apple.com/videos/play/wwdc2019/226
+[^2]: https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app

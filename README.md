@@ -25,7 +25,7 @@ All global state data flows through the application following this basic pattern
 
 Further, avoiding complexity like two-way data bindings, or the spaghetti engendered by mutability, allows our code to become clean, fast, and maintainable. This is the key difference between this application framework (and the ideas behind it) and other presentations of actions, state, and view previously shown at WWDC.[^1] By avoiding direct mutations called from outside the state layer and embracing immutability instead, complexity vanishes and our code becomes much more robust.
 
-[*The ImmutableData Programming Guide*][idpg] is the definitive reference for learning `ImmutableData`.
+[*The ImmutableData Programming Guide*](https://github.com/Swift-ImmutableData/ImmutableData-Book) is the definitive reference for learning `ImmutableData`.
 
 ## Support for Legacy Platforms
 
@@ -53,7 +53,7 @@ The `ImmutableData` package makes three library modules available to your produc
 * `ImmutableUI`: This is the “UI” infra. This module builds the basic types for displaying and transforming global application state in your SwiftUI component graph.
 * `AsyncSequenceTestUtils`: This module helps us write predictable and deterministic tests for certain asynchronous operations. This is *not* intended to ship as a dependency in your production code — this is *only* intended for test code.
 
-[*The ImmutableData Programming Guide*][idpg] presents complete sample application product tutorials. This is the recommended way to learn how to build products with `ImmutableData`.
+*The ImmutableData Programming Guide* presents complete sample application product tutorials. This is the recommended way to learn how to build products with `ImmutableData`.
 
 Start by importing the `ImmutableData` package as a dependency. Here is an example from Swift Package Manager:
 
@@ -72,37 +72,30 @@ let package = Package(
     .macCatalyst(.v17),
   ],
   dependencies: [
-    .package(url: "https://github.com/Swift-ImmutableData/ImmutableData", from: "0.3.0")
+    .package(
+      url: "https://github.com/Swift-ImmutableData/ImmutableData",
+      from: "0.3.0"
+    )
   ],
   targets: [
     .target(
-      name: "MyApp",
+      name: "MyPackage",
       dependencies: [
-        "MyAppCore",
         .product(
-          name: "ImmutableUI", 
+          name: "ImmutableData",
           package: "ImmutableData"
         ),
         .product(
-          name: "ImmutableData", 
+          name: "ImmutableUI",
           package: "ImmutableData"
         ),
       ]
-    ),
-    .target(
-      name: "MyAppCore",
-      dependencies: [
-        .product(
-          name: "ImmutableData", 
-          package: "ImmutableData"
-        ),
-      ]
-    ),
+    )
   ]
 )
 ```
 
-If you use Xcode to manage your app's dependencies, see [how to add package dependencies to your app](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app) and use this package URL: `https://github.com/Swift-ImmutableData/ImmutableData`.
+If you use Xcode to manage your app’s dependencies, Apple publishes documentation with steps you can follow to add `ImmutableData` directly through Xcode.[^2]
 
 A very basic “Hello World” application would be a Counter: a SwiftUI application to increment and decrement an integer value.
 
@@ -242,7 +235,7 @@ extension CounterContent {
 
 ## SwiftUI Sample Apps
 
-The `Samples/Samples.xcworkspace` workspace contains three sample application products built from the `ImmutableData` infra. These products are discussed in [*The ImmutableData Programming Guide*][idpg].
+The `Samples/Samples.xcworkspace` workspace contains three sample application products built from the `ImmutableData` infra. These products are discussed in *The ImmutableData Programming Guide*.
 
 ## License
 
@@ -255,5 +248,4 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
 [^1]: https://developer.apple.com/videos/play/wwdc2019/226
-
-[idpg]: https://github.com/Swift-ImmutableData/ImmutableData-Book
+[^2]: https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app

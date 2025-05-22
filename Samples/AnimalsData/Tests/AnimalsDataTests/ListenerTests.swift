@@ -148,7 +148,7 @@ extension PersistentSessionPersistentStoreTestDouble {
 }
 
 extension StoreTestDouble : ImmutableData.Dispatcher {
-  func dispatch(action: Action) throws {
+  func dispatch(action: Action) throws(AnimalsReducer.Error) {
     self.parameterAction.append(action)
   }
   

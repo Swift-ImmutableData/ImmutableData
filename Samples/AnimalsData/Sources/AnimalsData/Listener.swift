@@ -39,7 +39,7 @@ extension UserDefaults {
 }
 
 extension Listener {
-  public func listen(to store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction> & ImmutableData.Selector<AnimalsState> & ImmutableData.Streamer<AnimalsState, AnimalsAction> & AnyObject) {
+  public func listen(to store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error> & ImmutableData.Selector<AnimalsState> & ImmutableData.Streamer<AnimalsState, AnimalsAction> & AnyObject) {
     if self.store !== store {
       self.store = store
       
@@ -65,7 +65,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction> & ImmutableData.Selector<AnimalsState>,
+    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error> & ImmutableData.Selector<AnimalsState>,
     oldState: AnimalsState,
     action: AnimalsAction
   ) async {
@@ -80,7 +80,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction> & ImmutableData.Selector<AnimalsState>,
+    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error> & ImmutableData.Selector<AnimalsState>,
     oldState: AnimalsState,
     action: AnimalsAction.UI
   ) async {
@@ -99,7 +99,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction> & ImmutableData.Selector<AnimalsState>,
+    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error> & ImmutableData.Selector<AnimalsState>,
     oldState: AnimalsState,
     action: AnimalsAction.UI.CategoryList
   ) async {
@@ -134,7 +134,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction> & ImmutableData.Selector<AnimalsState>,
+    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error> & ImmutableData.Selector<AnimalsState>,
     oldState: AnimalsState,
     action: AnimalsAction.UI.AnimalList
   ) async {
@@ -167,7 +167,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction> & ImmutableData.Selector<AnimalsState>,
+    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error> & ImmutableData.Selector<AnimalsState>,
     oldState: AnimalsState,
     action: AnimalsAction.UI.AnimalDetail
   ) async {
@@ -189,7 +189,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction> & ImmutableData.Selector<AnimalsState>,
+    from store: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error> & ImmutableData.Selector<AnimalsState>,
     oldState: AnimalsState,
     action: AnimalsAction.UI.AnimalEditor
   ) async {

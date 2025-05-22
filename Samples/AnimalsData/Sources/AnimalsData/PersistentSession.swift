@@ -49,7 +49,7 @@ extension PersistentSession {
   func fetchAnimalsQuery<Dispatcher, Selector>() -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction>, Selector : ImmutableData.Selector<AnimalsState> {
+  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>, Selector : ImmutableData.Selector<AnimalsState> {
     { dispatcher, selector in
       try await self.fetchAnimalsQuery(
         dispatcher: dispatcher,
@@ -61,7 +61,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func fetchAnimalsQuery(
-    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction>,
+    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>,
     selector: some ImmutableData.Selector<AnimalsState>
   ) async throws {
     let animals = try await {
@@ -105,7 +105,7 @@ extension PersistentSession {
   ) -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction>, Selector : ImmutableData.Selector<AnimalsState> {
+  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>, Selector : ImmutableData.Selector<AnimalsState> {
     { dispatcher, selector in
       try await self.addAnimalMutation(
         dispatcher: dispatcher,
@@ -121,7 +121,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func addAnimalMutation(
-    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction>,
+    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>,
     selector: some ImmutableData.Selector<AnimalsState>,
     id: String,
     name: String,
@@ -175,7 +175,7 @@ extension PersistentSession {
   ) -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction>, Selector : ImmutableData.Selector<AnimalsState> {
+  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>, Selector : ImmutableData.Selector<AnimalsState> {
     { dispatcher, selector in
       try await self.updateAnimalMutation(
         dispatcher: dispatcher,
@@ -191,7 +191,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func updateAnimalMutation(
-    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction>,
+    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>,
     selector: some ImmutableData.Selector<AnimalsState>,
     animalId: String,
     name: String,
@@ -243,7 +243,7 @@ extension PersistentSession {
   ) -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction>, Selector : ImmutableData.Selector<AnimalsState> {
+  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>, Selector : ImmutableData.Selector<AnimalsState> {
     { dispatcher, selector in
       try await self.deleteAnimalMutation(
         dispatcher: dispatcher,
@@ -256,7 +256,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func deleteAnimalMutation(
-    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction>,
+    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>,
     selector: some ImmutableData.Selector<AnimalsState>,
     animalId: String
   ) async throws {
@@ -300,7 +300,7 @@ extension PersistentSession {
   func fetchCategoriesQuery<Dispatcher, Selector>() -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction>, Selector : ImmutableData.Selector<AnimalsState> {
+  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>, Selector : ImmutableData.Selector<AnimalsState> {
     { dispatcher, selector in
       try await self.fetchCategoriesQuery(
         dispatcher: dispatcher,
@@ -312,7 +312,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func fetchCategoriesQuery(
-    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction>,
+    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>,
     selector: some ImmutableData.Selector<AnimalsState>
   ) async throws {
     let categories = try await {
@@ -351,7 +351,7 @@ extension PersistentSession {
   func reloadSampleDataMutation<Dispatcher, Selector>() -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction>, Selector : ImmutableData.Selector<AnimalsState> {
+  ) async throws -> Void where Dispatcher : ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>, Selector : ImmutableData.Selector<AnimalsState> {
     { dispatcher, selector in
       try await self.reloadSampleDataMutation(
         dispatcher: dispatcher,
@@ -363,7 +363,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func reloadSampleDataMutation(
-    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction>,
+    dispatcher: some ImmutableData.Dispatcher<AnimalsState, AnimalsAction, AnimalsReducer.Error>,
     selector: some ImmutableData.Selector<AnimalsState>
   ) async throws {
     let (animals, categories) = try await {

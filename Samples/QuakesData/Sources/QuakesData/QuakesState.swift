@@ -73,7 +73,7 @@ extension QuakesState {
   fileprivate func selectQuakesValues(
     searchText: String,
     searchDate: Date,
-    sort keyPath: KeyPath<Quake, some Comparable> & Sendable,
+    sort keyPath: KeyPath<Quake, some Comparable & Sendable> & Sendable,
     order: SortOrder = .forward
   ) -> Array<Quake> {
     self.selectQuakesValues(
@@ -93,7 +93,7 @@ extension QuakesState {
   public static func selectQuakesValues(
     searchText: String,
     searchDate: Date,
-    sort keyPath: KeyPath<Quake, some Comparable> & Sendable,
+    sort keyPath: KeyPath<Quake, some Comparable & Sendable> & Sendable,
     order: SortOrder = .forward
   ) -> @Sendable (Self) -> Array<Quake> {
     { state in

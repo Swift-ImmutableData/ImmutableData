@@ -69,7 +69,7 @@ extension AnimalsState {
 
 extension AnimalsState {
   fileprivate func selectCategoriesValues(
-    sort keyPath: KeyPath<Category, some Comparable> & Sendable,
+    sort keyPath: KeyPath<Category, some Comparable & Sendable> & Sendable,
     order: SortOrder = .forward
   ) -> Array<Category> {
     self.selectCategoriesValues(
@@ -82,7 +82,7 @@ extension AnimalsState {
 
 extension AnimalsState {
   public static func selectCategoriesValues(
-    sort keyPath: KeyPath<Category, some Comparable> & Sendable,
+    sort keyPath: KeyPath<Category, some Comparable & Sendable> & Sendable,
     order: SortOrder = .forward
   ) -> @Sendable (Self) -> Array<Category> {
     { state in state.selectCategoriesValues(sort: keyPath, order: order) }
@@ -176,7 +176,7 @@ extension AnimalsState {
 extension AnimalsState {
   fileprivate func selectAnimalsValues(
     categoryId: Category.ID?,
-    sort keyPath: KeyPath<Animal, some Comparable> & Sendable,
+    sort keyPath: KeyPath<Animal, some Comparable & Sendable> & Sendable,
     order: SortOrder = .forward
   ) -> Array<Animal> {
     self.selectAnimalsValues(
@@ -191,7 +191,7 @@ extension AnimalsState {
 extension AnimalsState {
   public static func selectAnimalsValues(
     categoryId: Category.ID?,
-    sort keyPath: KeyPath<Animal, some Comparable> & Sendable,
+    sort keyPath: KeyPath<Animal, some Comparable & Sendable> & Sendable,
     order: SortOrder = .forward
   ) -> @Sendable (Self) -> Array<Animal> {
     { state in state.selectAnimalsValues(

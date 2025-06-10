@@ -120,7 +120,7 @@ extension QuakesStateTests {
       sort partialKeyPath: PartialKeyPath<Quake> & Sendable,
       valueType: Value.Type,
       order: SortOrder
-    ) where Value : Comparable {
+    ) where Value : Comparable & Sendable {
       let keyPath = partialKeyPath as! KeyPath<Quake, Value> & Sendable
       let state = Self.state
       let values = QuakesState.selectQuakesValues(
@@ -152,7 +152,7 @@ extension QuakesStateTests {
         )
       )
     }
-    let valueType = type(of: partialKeyPath).valueType as! any Comparable.Type
+    let valueType = type(of: partialKeyPath).valueType as! any (Comparable & Sendable).Type
     test(
       searchText: searchText,
       searchDate: searchDate,

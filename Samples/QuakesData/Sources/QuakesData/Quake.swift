@@ -18,13 +18,13 @@ import CowBox
 import Foundation
 
 @CowBox(init: .withPackage) public struct Quake: Hashable, Sendable {
-  public let quakeId: String
-  public let magnitude: Double
-  public let time: Date
-  public let updated: Date
-  public let name: String
-  public let longitude: Double
-  public let latitude: Double
+  @CowBoxNonMutating public var quakeId: String
+  @CowBoxNonMutating public var magnitude: Double
+  @CowBoxNonMutating public var time: Date
+  @CowBoxNonMutating public var updated: Date
+  @CowBoxNonMutating public var name: String
+  @CowBoxNonMutating public var longitude: Double
+  @CowBoxNonMutating public var latitude: Double
 }
 
 extension Quake: Identifiable {

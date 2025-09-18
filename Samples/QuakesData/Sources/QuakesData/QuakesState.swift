@@ -19,7 +19,7 @@ import CowBox
 import Foundation
 
 @CowBox(init: .withPackage) public struct QuakesState: Hashable, Sendable {
-  package var quakes: Quakes
+  @CowBoxMutating package var quakes: Quakes
 }
 
 extension QuakesState {
@@ -32,8 +32,8 @@ extension QuakesState {
 
 extension QuakesState {
   @CowBox(init: .withPackage) package struct Quakes: Hashable, Sendable {
-    package var data: TreeDictionary<Quake.ID, Quake> = [:]
-    package var status: Status? = nil
+    @CowBoxMutating package var data: TreeDictionary<Quake.ID, Quake> = [:]
+    @CowBoxMutating package var status: Status? = nil
   }
 }
 

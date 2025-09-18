@@ -17,8 +17,8 @@
 import CowBox
 
 @CowBox(init: .withPackage) public struct Category: Hashable, Codable, Sendable {
-  public let categoryId: String
-  public let name: String
+  @CowBoxNonMutating public var categoryId: String
+  @CowBoxNonMutating public var name: String
 }
 
 extension Category: Identifiable {

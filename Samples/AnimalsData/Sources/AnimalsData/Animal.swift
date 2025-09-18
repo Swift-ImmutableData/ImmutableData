@@ -17,10 +17,10 @@
 import CowBox
 
 @CowBox(init: .withPackage) public struct Animal: Hashable, Codable, Sendable {
-  public let animalId: String
-  public let name: String
-  public let diet: Diet
-  public let categoryId: String
+  @CowBoxNonMutating public var animalId: String
+  @CowBoxNonMutating public var name: String
+  @CowBoxNonMutating public var diet: Diet
+  @CowBoxNonMutating public var categoryId: String
 }
 
 extension Animal {

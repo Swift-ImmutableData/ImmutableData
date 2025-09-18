@@ -19,8 +19,8 @@ import CowBox
 import Foundation
 
 @CowBox(init: .withPackage) public struct AnimalsState: Hashable, Sendable {
-  package var categories: Categories
-  package var animals: Animals
+  @CowBoxMutating package var categories: Categories
+  @CowBoxMutating package var animals: Animals
 }
 
 extension AnimalsState {
@@ -34,16 +34,16 @@ extension AnimalsState {
 
 extension AnimalsState {
   @CowBox(init: .withPackage) package struct Categories: Hashable, Sendable {
-    package var data: TreeDictionary<Category.ID, Category> = [:]
-    package var status: Status? = nil
+    @CowBoxMutating package var data: TreeDictionary<Category.ID, Category> = [:]
+    @CowBoxMutating package var status: Status? = nil
   }
 }
 
 extension AnimalsState {
   @CowBox(init: .withPackage) package struct Animals: Hashable, Sendable {
-    package var data: TreeDictionary<Animal.ID, Animal> = [:]
-    package var status: Status? = nil
-    package var queue: TreeDictionary<Animal.ID, Status> = [:]
+    @CowBoxMutating package var data: TreeDictionary<Animal.ID, Animal> = [:]
+    @CowBoxMutating package var status: Status? = nil
+    @CowBoxMutating package var queue: TreeDictionary<Animal.ID, Status> = [:]
   }
 }
 

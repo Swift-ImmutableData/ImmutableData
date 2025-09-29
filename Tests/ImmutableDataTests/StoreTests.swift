@@ -43,7 +43,7 @@ extension ReducerTestDouble {
   @Sendable func reduce(
     state: StateTestDouble,
     action: ActionTestDouble
-  ) throws -> StateTestDouble {
+  ) throws(Swift.Error) -> StateTestDouble {
     self.parameterState = state
     self.parameterAction = action
     if let returnError = self.returnError {
@@ -54,15 +54,15 @@ extension ReducerTestDouble {
 }
 
 final fileprivate class ThunkTestDouble : @unchecked Sendable {
-  var parameterDispatcher: Store<StateTestDouble, ActionTestDouble>?
-  var parameterSelector: Store<StateTestDouble, ActionTestDouble>?
+  var parameterDispatcher: Store<StateTestDouble, ActionTestDouble, Swift.Error>?
+  var parameterSelector: Store<StateTestDouble, ActionTestDouble, Swift.Error>?
   var returnError: Error?
 }
 
 extension ThunkTestDouble {
   @Sendable func thunk(
-    dispatcher: Store<StateTestDouble, ActionTestDouble>,
-    selector: Store<StateTestDouble, ActionTestDouble>
+    dispatcher: Store<StateTestDouble, ActionTestDouble, Swift.Error>,
+    selector: Store<StateTestDouble, ActionTestDouble, Swift.Error>
   ) throws {
     self.parameterDispatcher = dispatcher
     self.parameterSelector = selector
@@ -74,8 +74,8 @@ extension ThunkTestDouble {
 
 extension ThunkTestDouble {
   @Sendable func asyncThunk(
-    dispatcher: Store<StateTestDouble, ActionTestDouble>,
-    selector: Store<StateTestDouble, ActionTestDouble>
+    dispatcher: Store<StateTestDouble, ActionTestDouble, Swift.Error>,
+    selector: Store<StateTestDouble, ActionTestDouble, Swift.Error>
   ) async throws {
     self.parameterDispatcher = dispatcher
     self.parameterSelector = selector

@@ -20,7 +20,7 @@ public enum AnimalsReducer {
   @Sendable public static func reduce(
     state: AnimalsState,
     action: AnimalsAction
-  ) throws -> AnimalsState {
+  ) throws(AnimalsReducer.Error) -> AnimalsState {
     switch action {
     case .ui(action: let action):
       return try self.reduce(state: state, action: action)
@@ -34,7 +34,7 @@ extension AnimalsReducer {
   private static func reduce(
     state: AnimalsState,
     action: AnimalsAction.UI
-  ) throws -> AnimalsState {
+  ) throws(AnimalsReducer.Error) -> AnimalsState {
     switch action {
     case .categoryList(action: let action):
       return try self.reduce(state: state, action: action)
@@ -52,7 +52,7 @@ extension AnimalsReducer {
   private static func reduce(
     state: AnimalsState,
     action: AnimalsAction.UI.CategoryList
-  ) throws -> AnimalsState {
+  ) throws(AnimalsReducer.Error) -> AnimalsState {
     switch action {
     case .onAppear:
       if state.categories.status == nil {
@@ -75,17 +75,17 @@ extension AnimalsReducer {
 }
 
 extension AnimalsReducer {
-  package struct Error: Swift.Error {
-    package enum Code: Hashable, Sendable {
+  public struct Error: Swift.Error {
+    public enum Code: Hashable, Sendable {
       case animalNotFound
     }
     
-    package let code: Self.Code
+    public let code: Self.Code
   }
 }
 
 extension AnimalsState {
-  fileprivate func onTapDeleteSelectedAnimalButton(animalId: Animal.ID) throws -> Self {
+  fileprivate func onTapDeleteSelectedAnimalButton(animalId: Animal.ID) throws(AnimalsReducer.Error) -> Self {
     guard let _ = self.animals.data[animalId] else {
       throw AnimalsReducer.Error(code: .animalNotFound)
     }
@@ -99,7 +99,7 @@ extension AnimalsReducer {
   private static func reduce(
     state: AnimalsState,
     action: AnimalsAction.UI.AnimalList
-  ) throws -> AnimalsState {
+  ) throws(AnimalsReducer.Error) -> AnimalsState {
     switch action {
     case .onAppear:
       if state.animals.status == nil {
@@ -118,7 +118,7 @@ extension AnimalsReducer {
   private static func reduce(
     state: AnimalsState,
     action: AnimalsAction.UI.AnimalDetail
-  ) throws -> AnimalsState {
+  ) throws(AnimalsReducer.Error) -> AnimalsState {
     switch action {
     case .onTapDeleteSelectedAnimalButton(animalId: let animalId):
       return try state.onTapDeleteSelectedAnimalButton(animalId: animalId)
@@ -145,7 +145,7 @@ extension AnimalsState {
     name: String,
     diet: Animal.Diet,
     categoryId: Category.ID
-  ) throws -> Self {
+  ) throws(AnimalsReducer.Error) -> Self {
     guard let _ = self.animals.data[animalId] else {
       throw AnimalsReducer.Error(code: .animalNotFound)
     }
@@ -159,7 +159,7 @@ extension AnimalsReducer {
   private static func reduce(
     state: AnimalsState,
     action: AnimalsAction.UI.AnimalEditor
-  ) throws -> AnimalsState {
+  ) throws(AnimalsReducer.Error) -> AnimalsState {
     switch action {
     case .onTapAddAnimalButton(id: let id, name: let name, diet: let diet, categoryId: let categoryId):
       return state.onTapAddAnimalButton(id: id, name: name, diet: diet, categoryId: categoryId)
@@ -173,7 +173,7 @@ extension AnimalsReducer {
   private static func reduce(
     state: AnimalsState,
     action: AnimalsAction.Data
-  ) throws -> AnimalsState {
+  ) throws(AnimalsReducer.Error) -> AnimalsState {
     switch action {
     case .persistentSession(.didFetchCategories(result: let result)):
       return self.persistentSessionDidFetchCategories(state: state, result: result)
@@ -288,7 +288,7 @@ extension AnimalsReducer {
     state: AnimalsState,
     animalId: Animal.ID,
     result: AnimalsAction.Data.PersistentSession.UpdateAnimalResult
-  ) throws -> AnimalsState {
+  ) throws(AnimalsReducer.Error) -> AnimalsState {
     guard let _ = state.animals.data[animalId] else {
       throw AnimalsReducer.Error(code: .animalNotFound)
     }
@@ -309,7 +309,7 @@ extension AnimalsReducer {
     state: AnimalsState,
     animalId: Animal.ID,
     result: AnimalsAction.Data.PersistentSession.DeleteAnimalResult
-  ) throws -> AnimalsState {
+  ) throws(AnimalsReducer.Error) -> AnimalsState {
     guard let _ = state.animals.data[animalId] else {
       throw AnimalsReducer.Error(code: .animalNotFound)
     }

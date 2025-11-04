@@ -33,6 +33,7 @@ jobs:
           - "16.3"
           - "16.4"
           - "26.0"
+          - "26.1"
         configuration:
           - debug
           - release

@@ -45,6 +45,7 @@ extension Selector {
   /// A component graph that depends on the entire global state of our application could compute its `body` properties more often than necessary.
   ///
   /// - Returns: The global state of our application.
+  @available(*, deprecated)
   @MainActor public var state: State {
     self.select { state in state }
   }

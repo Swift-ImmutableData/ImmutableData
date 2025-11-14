@@ -52,7 +52,8 @@ extension Listener {
           if UserDefaults.standard.isDebug {
             print("[AnimalsData][Listener] Old State: \(oldState)")
             print("[AnimalsData][Listener] Action: \(action)")
-            print("[AnimalsData][Listener] New State: \(store.state)")
+            let newState = store.select({ state in state })
+            print("[AnimalsData][Listener] New State: \(newState)")
           }
 #endif
           guard let self = self else { return }
@@ -103,10 +104,11 @@ extension Listener {
     oldState: AnimalsState,
     action: AnimalsAction.UI.CategoryList
   ) async {
+    let newState = store.select({ state in state })
     switch action {
     case .onAppear:
       if oldState.categories.status == nil,
-         store.state.categories.status == .waiting {
+         newState.categories.status == .waiting {
         do {
           try await store.dispatch(
             thunk: self.session.fetchCategoriesQuery()
@@ -117,9 +119,9 @@ extension Listener {
       }
     case .onTapReloadSampleDataButton:
       if oldState.categories.status != .waiting,
-         store.state.categories.status == .waiting,
+         newState.categories.status == .waiting,
          oldState.animals.status != .waiting,
-         store.state.animals.status == .waiting {
+         newState.animals.status == .waiting {
         do {
           try await store.dispatch(
             thunk: self.session.reloadSampleDataMutation()
@@ -138,10 +140,11 @@ extension Listener {
     oldState: AnimalsState,
     action: AnimalsAction.UI.AnimalList
   ) async {
+    let newState = store.select({ state in state })
     switch action {
     case .onAppear:
       if oldState.animals.status == nil,
-         store.state.animals.status == .waiting {
+         newState.animals.status == .waiting {
         do {
           try await store.dispatch(
             thunk: self.session.fetchAnimalsQuery()
@@ -152,7 +155,7 @@ extension Listener {
       }
     case .onTapDeleteSelectedAnimalButton(animalId: let animalId):
       if oldState.animals.queue[animalId] != .waiting,
-         store.state.animals.queue[animalId] == .waiting {
+         newState.animals.queue[animalId] == .waiting {
         do {
           try await store.dispatch(
             thunk: self.session.deleteAnimalMutation(animalId: animalId)
@@ -171,10 +174,11 @@ extension Listener {
     oldState: AnimalsState,
     action: AnimalsAction.UI.AnimalDetail
   ) async {
+    let newState = store.select({ state in state })
     switch action {
     case .onTapDeleteSelectedAnimalButton(animalId: let animalId):
       if oldState.animals.queue[animalId] != .waiting,
-         store.state.animals.queue[animalId] == .waiting {
+         newState.animals.queue[animalId] == .waiting {
         do {
           try await store.dispatch(
             thunk: self.session.deleteAnimalMutation(animalId: animalId)
@@ -193,10 +197,11 @@ extension Listener {
     oldState: AnimalsState,
     action: AnimalsAction.UI.AnimalEditor
   ) async {
+    let newState = store.select({ state in state })
     switch action {
     case .onTapAddAnimalButton(id: let id, name: let name, diet: let diet, categoryId: let categoryId):
       if oldState.animals.queue[id] != .waiting,
-         store.state.animals.queue[id] == .waiting {
+         newState.animals.queue[id] == .waiting {
         do {
           try await store.dispatch(
             thunk: self.session.addAnimalMutation(id: id, name: name, diet: diet, categoryId: categoryId)
@@ -207,7 +212,7 @@ extension Listener {
       }
     case .onTapUpdateAnimalButton(animalId: let animalId, name: let name, diet: let diet, categoryId: let categoryId):
       if oldState.animals.queue[animalId] != .waiting,
-         store.state.animals.queue[animalId] == .waiting {
+         newState.animals.queue[animalId] == .waiting {
         do {
           try await store.dispatch(
             thunk: self.session.updateAnimalMutation(animalId: animalId, name: name, diet: diet, categoryId: categoryId)

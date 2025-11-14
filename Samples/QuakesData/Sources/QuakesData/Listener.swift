@@ -91,10 +91,11 @@ extension Listener {
     oldState: QuakesState,
     action: QuakesAction.UI.QuakeList
   ) async {
+    let newState = store.select({ state in state })
     switch action {
     case .onAppear:
       if oldState.quakes.status == nil,
-         store.state.quakes.status == .waiting {
+         newState.quakes.status == .waiting {
         do {
           try await store.dispatch(
             thunk: self.session.fetchLocalQuakesQuery()
@@ -105,7 +106,7 @@ extension Listener {
       }
     case .onTapRefreshQuakesButton(range: let range):
       if oldState.quakes.status != .waiting,
-         store.state.quakes.status == .waiting {
+         newState.quakes.status == .waiting {
         do {
           try await store.dispatch(
             thunk: self.session.fetchRemoteQuakesQuery(range: range)
@@ -168,6 +169,7 @@ extension Listener {
     oldState: QuakesState,
     action: QuakesAction.Data.PersistentSession.RemoteStore
   ) async {
+    let newState = store.select({ state in state })
     switch action {
     case .didFetchQuakes(result: let result):
       switch result {
@@ -177,16 +179,16 @@ extension Listener {
         var deleted = Array<Quake>()
         for quake in quakes {
           if oldState.quakes.data[quake.id] == nil,
-             store.state.quakes.data[quake.id] != nil {
+             newState.quakes.data[quake.id] != nil {
             inserted.append(quake)
           }
           if let oldQuake = oldState.quakes.data[quake.id],
-             let quake = store.state.quakes.data[quake.id],
+             let quake = newState.quakes.data[quake.id],
              oldQuake != quake {
             updated.append(quake)
           }
           if oldState.quakes.data[quake.id] != nil,
-             store.state.quakes.data[quake.id] == nil {
+             newState.quakes.data[quake.id] == nil {
             deleted.append(quake)
           }
         }

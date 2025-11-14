@@ -102,7 +102,7 @@ extension StoreTests {
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
   }
 }
 
@@ -118,7 +118,7 @@ extension StoreTests {
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     do {
       try await store.dispatch(action: self.action)
@@ -131,7 +131,7 @@ extension StoreTests {
     #expect(self.reducer.parameterState === self.state)
     #expect(self.reducer.parameterAction === self.action)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
   }
 }
 
@@ -145,14 +145,14 @@ extension StoreTests {
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     try await store.dispatch(action: self.action)
     
     #expect(self.reducer.parameterState === self.state)
     #expect(self.reducer.parameterAction === self.action)
     
-    #expect(await store.state === self.reducer.returnState)
+    #expect(await store.select({ state in state }) === self.reducer.returnState)
   }
 }
 
@@ -168,7 +168,7 @@ extension StoreTests {
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     do {
       try await store.dispatch(thunk: self.thunk.thunk)
@@ -181,7 +181,7 @@ extension StoreTests {
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     let parameterDispatcher = try #require(self.thunk.parameterDispatcher)
     #expect(parameterDispatcher === store)
@@ -201,14 +201,14 @@ extension StoreTests {
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     try await store.dispatch(thunk: self.thunk.thunk)
     
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     let parameterDispatcher = try #require(self.thunk.parameterDispatcher)
     #expect(parameterDispatcher === store)
@@ -230,7 +230,7 @@ extension StoreTests {
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     do {
       try await store.dispatch(thunk: self.thunk.asyncThunk)
@@ -243,7 +243,7 @@ extension StoreTests {
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     let parameterDispatcher = try #require(self.thunk.parameterDispatcher)
     #expect(parameterDispatcher === store)
@@ -263,14 +263,14 @@ extension StoreTests {
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     try await store.dispatch(thunk: self.thunk.asyncThunk)
     
     #expect(self.reducer.parameterState == nil)
     #expect(self.reducer.parameterAction == nil)
     
-    #expect(await store.state === self.state)
+    #expect(await store.select({ state in state }) === self.state)
     
     let parameterDispatcher = try #require(self.thunk.parameterDispatcher)
     #expect(parameterDispatcher === store)
@@ -291,7 +291,7 @@ extension StoreTests {
       #expect(self.reducer.parameterState == nil)
       #expect(self.reducer.parameterAction == nil)
       
-      #expect(await store.state === self.state)
+      #expect(await store.select({ state in state }) === self.state)
       
       let stream = await store.makeStream()
       
@@ -314,7 +314,7 @@ extension StoreTests {
       #expect(self.reducer.parameterState === self.state)
       #expect(self.reducer.parameterAction === self.action)
       
-      #expect(await store.state === self.reducer.returnState)
+      #expect(await store.select({ state in state }) === self.reducer.returnState)
       
       group.cancelAll()
       try await group.waitForAll()
@@ -324,7 +324,7 @@ extension StoreTests {
       #expect(self.reducer.parameterState === self.reducer.returnState)
       #expect(self.reducer.parameterAction === self.action)
       
-      #expect(await store.state === self.reducer.returnState)
+      #expect(await store.select({ state in state }) === self.reducer.returnState)
     }
   }
 }
@@ -340,7 +340,7 @@ extension StoreTests {
       #expect(self.reducer.parameterState == nil)
       #expect(self.reducer.parameterAction == nil)
       
-      #expect(await store.state === self.state)
+      #expect(await store.select({ state in state }) === self.state)
       
       let stream = await store.makeStream()
       
@@ -363,14 +363,14 @@ extension StoreTests {
       #expect(self.reducer.parameterState === self.state)
       #expect(self.reducer.parameterAction === self.action)
       
-      #expect(await store.state === self.reducer.returnState)
+      #expect(await store.select({ state in state }) === self.reducer.returnState)
       
       try await store.dispatch(action: self.action)
       
       #expect(self.reducer.parameterState === self.reducer.returnState)
       #expect(self.reducer.parameterAction === self.action)
       
-      #expect(await store.state === self.reducer.returnState)
+      #expect(await store.select({ state in state }) === self.reducer.returnState)
     }
   }
 }

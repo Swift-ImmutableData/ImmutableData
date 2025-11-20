@@ -65,6 +65,40 @@ extension ImmutableUI.Selector {
   }
 }
 
+extension ImmutableUI.Selector {
+  mutating func update(
+    id: some Hashable,
+    label: String? = nil,
+    filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
+    dependencySelector: repeat @escaping @Sendable (Store.State) -> each Dependency,
+    outputSelector: @escaping @Sendable (Store.State) -> Output
+  ) where Store == ImmutableData.Store<CounterState, CounterAction>, repeat each Dependency : Equatable, Output : Equatable {
+    self.update(
+      id: id,
+      label: label,
+      filter: isIncluded,
+      dependencySelector: repeat DependencySelector(select: each dependencySelector),
+      outputSelector: OutputSelector(select: outputSelector)
+    )
+  }
+}
+
+extension ImmutableUI.Selector {
+  mutating func update(
+    label: String? = nil,
+    filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
+    dependencySelector: repeat @escaping @Sendable (Store.State) -> each Dependency,
+    outputSelector: @escaping @Sendable (Store.State) -> Output
+  ) where Store == ImmutableData.Store<CounterState, CounterAction>, repeat each Dependency : Equatable, Output : Equatable {
+    self.update(
+      label: label,
+      filter: isIncluded,
+      dependencySelector: repeat DependencySelector(select: each dependencySelector),
+      outputSelector: OutputSelector(select: outputSelector)
+    )
+  }
+}
+
 @MainActor @propertyWrapper struct SelectValue : DynamicProperty {
   @ImmutableUI.Selector(outputSelector: CounterState.selectValue()) var wrappedValue
   

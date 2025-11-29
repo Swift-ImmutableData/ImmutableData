@@ -38,7 +38,7 @@ extension ImmutableUI.Selector {
     filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
     dependencySelector: repeat @escaping @Sendable (Store.State) -> each Dependency,
     outputSelector: @escaping @Sendable (Store.State) -> Output
-  ) where Store == ImmutableData.Store<CounterState, CounterAction>, repeat each Dependency : Equatable, Output : Equatable {
+  ) where Store == ImmutableData.Store<CounterState, CounterAction, Never>, repeat each Dependency : Equatable, Output : Equatable {
     self.init(
       id: id,
       label: label,
@@ -55,7 +55,7 @@ extension ImmutableUI.Selector {
     filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
     dependencySelector: repeat @escaping @Sendable (Store.State) -> each Dependency,
     outputSelector: @escaping @Sendable (Store.State) -> Output
-  ) where Store == ImmutableData.Store<CounterState, CounterAction>, repeat each Dependency : Equatable, Output : Equatable {
+  ) where Store == ImmutableData.Store<CounterState, CounterAction, Never>, repeat each Dependency : Equatable, Output : Equatable {
     self.init(
       label: label,
       filter: isIncluded,

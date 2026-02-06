@@ -15,8 +15,8 @@
 //
 
 /// An interface that dispatches events that could affect change on the global state of our application.
-public protocol Dispatcher<State, Action>: Sendable {
-  
+public protocol Dispatcher<State, Action, Error>: Sendable {
+
   /// The global state of our application.
   ///
   /// - Important: `State` values are modeled as immutable value-types -- *not* mutable reference-types.
@@ -37,13 +37,18 @@ public protocol Dispatcher<State, Action>: Sendable {
   /// - SeeAlso: The `Action` type serves a similar role as the [Action](https://redux.js.org/understanding/thinking-in-redux/glossary#action) type in Redux.
   associatedtype Action: Sendable
   
+  /// The error thrown while dispatching the ``Action``.
+  ///
+  /// Action dispatchers that do not fail can set this to `Never`.
+  associatedtype Error: Swift.Error
+
   /// A ``/ImmutableData/Dispatcher`` type for affecting change on the global state of our application.
   ///
   /// This type is passed to the `dispatch(thunk:)` functions.
   ///
   /// This type can be the same type we just dispatched from -- but this is not explicitly required.
-  associatedtype Dispatcher: ImmutableData.Dispatcher<Self.State, Self.Action>
-  
+  associatedtype Dispatcher: ImmutableData.Dispatcher<Self.State, Self.Action, Self.Error>
+
   /// A ``/ImmutableData/Selector`` type for selecting a slice of the global state of our application.
   ///
   /// This type is passed to the `dispatch(thunk:)` functions.
@@ -56,11 +61,11 @@ public protocol Dispatcher<State, Action>: Sendable {
   ///
   /// - Parameter action: An event that could affect change on the global state of our application.
   ///
-  /// - Throws: An `Error` from the root reducer.
+  /// - Throws: ``Error`` from the root reducer, if any.
   ///
   /// - SeeAlso: The `dispatch(action:)` function serves a similar role as the [`dispatch(action)`](https://redux.js.org/api/store#dispatchaction) function in Redux.
-  @MainActor func dispatch(action: Action) throws
-  
+  @MainActor func dispatch(action: Action) throws(Self.Error)
+
   /// Dispatch a unit of work that could include side effects.
   ///
   /// - Parameter thunk: A unit of work that could include side effects.

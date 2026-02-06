@@ -75,7 +75,7 @@ import SwiftUI
   }
   
   /// The current store of the environment property.
-  public var wrappedValue: some ImmutableData.Dispatcher<Store.State, Store.Action> {
+  public var wrappedValue: some ImmutableData.Dispatcher<Store.State, Store.Action, Store.Error> {
     self.store
   }
 }

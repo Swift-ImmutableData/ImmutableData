@@ -45,7 +45,7 @@ extension UserDefaults {
 }
 
 extension Listener {
-  public func listen(to store: some ImmutableData.Dispatcher<QuakesState, QuakesAction> & ImmutableData.Selector<QuakesState> & ImmutableData.Streamer<QuakesState, QuakesAction> & AnyObject) {
+  public func listen(to store: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error> & ImmutableData.Selector<QuakesState> & ImmutableData.Streamer<QuakesState, QuakesAction> & AnyObject) {
     if self.store !== store {
       self.store = store
       
@@ -72,7 +72,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction> & ImmutableData.Selector<QuakesState>,
+    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error> & ImmutableData.Selector<QuakesState>,
     oldState: QuakesState,
     action: QuakesAction
   ) async {
@@ -87,7 +87,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction> & ImmutableData.Selector<QuakesState>,
+    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error> & ImmutableData.Selector<QuakesState>,
     oldState: QuakesState,
     action: QuakesAction.UI.QuakeList
   ) async {
@@ -137,7 +137,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction> & ImmutableData.Selector<QuakesState>,
+    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error> & ImmutableData.Selector<QuakesState>,
     oldState: QuakesState,
     action: QuakesAction.Data.PersistentSession
   ) async {
@@ -152,7 +152,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction> & ImmutableData.Selector<QuakesState>,
+    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error> & ImmutableData.Selector<QuakesState>,
     oldState: QuakesState,
     action: QuakesAction.Data.PersistentSession.LocalStore
   ) async {
@@ -165,7 +165,7 @@ extension Listener {
 
 extension Listener {
   private func onReceive(
-    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction> & ImmutableData.Selector<QuakesState>,
+    from store: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error> & ImmutableData.Selector<QuakesState>,
     oldState: QuakesState,
     action: QuakesAction.Data.PersistentSession.RemoteStore
   ) async {

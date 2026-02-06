@@ -51,21 +51,13 @@ extension Content : View {
 
 extension Content {
   private func didTapIncrementButton() {
-    do {
-      try self.dispatch(.didTapIncrementButton)
-    } catch {
-      print(error)
-    }
+    self.dispatch(.didTapIncrementButton)
   }
 }
 
 extension Content {
   private func didTapDecrementButton() {
-    do {
-      try self.dispatch(.didTapDecrementButton)
-    } catch {
-      print(error)
-    }
+    self.dispatch(.didTapDecrementButton)
   }
 }
 
@@ -84,23 +76,23 @@ extension Content {
   }
 }
 
-fileprivate struct CounterError : Swift.Error {
-  let state: CounterState
-  let action: CounterAction
-}
-
-#Preview {
-  @Previewable @State var store = ImmutableData.Store(
-    initialState: CounterState(),
-    reducer: { (state: CounterState, action: CounterAction) -> (CounterState) in
-      throw CounterError(
-        state: state,
-        action: action
-      )
-    }
-  )
-  
-  Provider(store) {
-    Content()
-  }
-}
+//fileprivate struct CounterError : Swift.Error {
+//  let state: CounterState
+//  let action: CounterAction
+//}
+//
+//#Preview {
+//  @Previewable @State var store = ImmutableData.Store(
+//    initialState: CounterState(),
+//    reducer: { (state: CounterState, action: CounterAction) throws(CounterError) -> (CounterState) in
+//      throw CounterError(
+//        state: state,
+//        action: action
+//      )
+//    }
+//  )
+//  
+//  Provider(store) {
+//    Content()
+//  }
+//}

@@ -32,9 +32,38 @@ jobs:
           # - "16.2"
           - "16.3"
           - "16.4"
+          # - "26.0"
+          # - "26.1"
+          # - "26.2"
+        configuration:
+          - debug
+          - release
+      fail-fast: false
+  macos-26:
+    name: Xcode ${{ matrix.xcode-version }} / ${{ matrix.configuration }}
+    runs-on: macos-26
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode-version }}.app
+    steps:
+      - name: Run checkout
+        uses: actions/checkout@v6
+      - name: Run tests
+        run: |
+          swift --version
+          swift test --configuration ${{ matrix.configuration }}
+    strategy:
+      matrix:
+        xcode-version:
+          # - "16.0"
+          # - "16.1"
+          # - "16.2"
+          # - "16.3"
+          # - "16.4"
           - "26.0"
           - "26.1"
           - "26.2"
+          - "26.3"
+          - "26.4"
         configuration:
           - debug
           - release

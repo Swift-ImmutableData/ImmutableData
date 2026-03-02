@@ -20,7 +20,7 @@ import ImmutableUI
 import SwiftUI
 
 @MainActor struct PreviewStore<Content> where Content : View {
-  @State private var store: ImmutableData.Store<AnimalsState, AnimalsAction> = {
+  @State private var store: ImmutableData.Store<AnimalsState, AnimalsAction, AnimalsReducer.Error> = {
     do {
       let store = ImmutableData.Store(
         initialState: AnimalsState(),

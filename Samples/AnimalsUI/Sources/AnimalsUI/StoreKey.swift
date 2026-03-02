@@ -25,7 +25,7 @@ extension ImmutableUI.Provider {
   public init(
     _ store: Store,
     @ViewBuilder content: () -> Content
-  ) where Store == ImmutableData.Store<AnimalsState, AnimalsAction> {
+  ) where Store == ImmutableData.Store<AnimalsState, AnimalsAction, AnimalsReducer.Error> {
     self.init(
       \.store,
        store,
@@ -35,7 +35,7 @@ extension ImmutableUI.Provider {
 }
 
 extension ImmutableUI.Dispatcher {
-  public init() where Store == ImmutableData.Store<AnimalsState, AnimalsAction> {
+  public init() where Store == ImmutableData.Store<AnimalsState, AnimalsAction, AnimalsReducer.Error> {
     self.init(\.store)
   }
 }
@@ -47,7 +47,7 @@ extension ImmutableUI.Selector {
     filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
     dependencySelector: repeat DependencySelector<Store.State, each Dependency>,
     outputSelector: OutputSelector<Store.State, Output>
-  ) where Store == ImmutableData.Store<AnimalsState, AnimalsAction> {
+  ) where Store == ImmutableData.Store<AnimalsState, AnimalsAction, AnimalsReducer.Error> {
     self.init(
       \.store,
        id: id,
@@ -65,7 +65,7 @@ extension ImmutableUI.Selector {
     filter isIncluded: (@Sendable (Store.State, Store.Action) -> Bool)? = nil,
     dependencySelector: repeat DependencySelector<Store.State, each Dependency>,
     outputSelector: OutputSelector<Store.State, Output>
-  ) where Store == ImmutableData.Store<AnimalsState, AnimalsAction> {
+  ) where Store == ImmutableData.Store<AnimalsState, AnimalsAction, AnimalsReducer.Error> {
     self.init(
       \.store,
        label: label,
@@ -84,7 +84,7 @@ extension ImmutableUI.Selector {
 }
 
 extension EnvironmentValues {
-  fileprivate var store: ImmutableData.Store<AnimalsState, AnimalsAction> {
+  fileprivate var store: ImmutableData.Store<AnimalsState, AnimalsAction, AnimalsReducer.Error> {
     get {
       self[StoreKey.self]
     }

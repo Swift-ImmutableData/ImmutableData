@@ -23,7 +23,8 @@
 /// - Throws: An `Error` indicating this `(State, Action)` pair led to a recoverable error and state was not transformed.
 ///
 /// - SeeAlso: The `Reducer` type serves a similar role as the [Reducer](https://redux.js.org/understanding/thinking-in-redux/glossary#reducer) type in Redux.
-public typealias Reducer<State, Action> = @Sendable (State, Action) throws -> State where State: Sendable, Action: Sendable
+public typealias Reducer<State, Action, Error> = @Sendable (State, Action) throws(Error) -> State
+where State: Sendable, Action: Sendable, Error: Swift.Error
 
 /// An object to save the current state of our data models.
 ///
@@ -50,19 +51,19 @@ public typealias Reducer<State, Action> = @Sendable (State, Action) throws -> St
 /// ```
 ///
 /// - SeeAlso: The `Store` object serves a similar role as the [Store](https://redux.js.org/understanding/thinking-in-redux/glossary#store) object in Redux.
-@MainActor final public class Store<State, Action> where State: Sendable, Action: Sendable {
+@MainActor final public class Store<State, Action, Error> where State: Sendable, Action: Sendable, Error: Swift.Error {
   private let registrar = StreamRegistrar<(oldState: State, action: Action)>()
   
   private var state: State
-  private let reducer: Reducer<State, Action>
-  
+  private let reducer: Reducer<State, Action, Error>
+
   /// Constructs a `Store`.
   ///
   /// - Parameter state: The initial state of our application.
   /// - Parameter reducer: The root reducer of our application.
   public init(
     initialState state: State,
-    reducer: @escaping Reducer<State, Action>
+    reducer: @escaping Reducer<State, Action, Error>
   ) {
     self.state = state
     self.reducer = reducer
@@ -70,7 +71,7 @@ public typealias Reducer<State, Action> = @Sendable (State, Action) throws -> St
 }
 
 extension Store: Dispatcher {
-  public func dispatch(action: Action) throws {
+  public func dispatch(action: Action) throws(Error) {
     let oldState = self.state
     self.state = try self.reducer(self.state, action)
     self.registrar.yield((oldState: oldState, action: action))

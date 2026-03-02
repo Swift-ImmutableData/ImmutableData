@@ -26,7 +26,7 @@ import SwiftUI
     
   }
   
-  var wrappedValue: (AnimalsAction) throws -> Void {
+  var wrappedValue: (AnimalsAction) throws(AnimalsReducer.Error) -> Void {
     self.dispatcher.dispatch
   }
 }

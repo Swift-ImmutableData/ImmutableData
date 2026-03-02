@@ -46,7 +46,7 @@ final actor PersistentSession<LocalStore, RemoteStore> where LocalStore : Persis
 
 extension PersistentSession {
   private func fetchLocalQuakesQuery(
-    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction>,
+    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>,
     selector: some ImmutableData.Selector<QuakesState>
   ) async throws {
     let quakes = try await {
@@ -89,7 +89,7 @@ extension PersistentSession {
   func fetchLocalQuakesQuery<Dispatcher, Selector>() -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction>, Selector: ImmutableData.Selector<QuakesState> {
+  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>, Selector: ImmutableData.Selector<QuakesState> {
     { dispatcher, selector in
       try await self.fetchLocalQuakesQuery(
         dispatcher: dispatcher,
@@ -101,7 +101,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func didFetchRemoteQuakesMutation(
-    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction>,
+    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>,
     selector: some ImmutableData.Selector<QuakesState>,
     inserted: Array<Quake>,
     updated: Array<Quake>,
@@ -123,7 +123,7 @@ extension PersistentSession {
   ) -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction>, Selector: ImmutableData.Selector<QuakesState> {
+  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>, Selector: ImmutableData.Selector<QuakesState> {
     { dispatcher, selector in
       try await self.didFetchRemoteQuakesMutation(
         dispatcher: dispatcher,
@@ -138,7 +138,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func deleteLocalQuakeMutation(
-    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction>,
+    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>,
     selector: some ImmutableData.Selector<QuakesState>,
     quakeId: Quake.ID
   ) async throws {
@@ -150,7 +150,7 @@ extension PersistentSession {
   func deleteLocalQuakeMutation<Dispatcher, Selector>(quakeId: Quake.ID) async throws -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction>, Selector: ImmutableData.Selector<QuakesState> {
+  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>, Selector: ImmutableData.Selector<QuakesState> {
     { dispatcher, selector in
       try await self.deleteLocalQuakeMutation(
         dispatcher: dispatcher,
@@ -163,7 +163,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func deleteLocalQuakesMutation(
-    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction>,
+    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>,
     selector: some ImmutableData.Selector<QuakesState>
   ) async throws {
     try await self.localStore.deleteLocalQuakesMutation()
@@ -174,7 +174,7 @@ extension PersistentSession {
   func deleteLocalQuakesMutation<Dispatcher, Selector>() -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction>, Selector: ImmutableData.Selector<QuakesState> {
+  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>, Selector: ImmutableData.Selector<QuakesState> {
     { dispatcher, selector in
       try await self.deleteLocalQuakesMutation(
         dispatcher: dispatcher,
@@ -186,7 +186,7 @@ extension PersistentSession {
 
 extension PersistentSession {
   private func fetchRemoteQuakesQuery(
-    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction>,
+    dispatcher: some ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>,
     selector: some ImmutableData.Selector<QuakesState>,
     range: QuakesAction.UI.QuakeList.RefreshQuakesRange
   ) async throws {
@@ -231,7 +231,7 @@ extension PersistentSession {
   ) -> @Sendable (
     Dispatcher,
     Selector
-  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction>, Selector: ImmutableData.Selector<QuakesState> {
+  ) async throws -> Void where Dispatcher: ImmutableData.Dispatcher<QuakesState, QuakesAction, QuakesReducer.Error>, Selector: ImmutableData.Selector<QuakesState> {
     { dispatcher, selector in
       try await self.fetchRemoteQuakesQuery(
         dispatcher: dispatcher,

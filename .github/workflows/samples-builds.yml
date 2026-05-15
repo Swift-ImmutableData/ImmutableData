@@ -12,8 +12,8 @@ on:
 permissions:
   contents: read
 jobs:
-  macos:
-    name: Xcode ${{ matrix.xcode-version }} / ${{ matrix.configuration }}
+  macos-15:
+    name: macos-15 / Xcode ${{ matrix.xcode-version }} / ${{ matrix.configuration }}
     runs-on: macos-15
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode-version }}.app
@@ -46,7 +46,7 @@ jobs:
           - release
       fail-fast: false
   macos-26:
-    name: Xcode ${{ matrix.xcode-version }} / ${{ matrix.configuration }}
+    name: macos-26 / Xcode ${{ matrix.xcode-version }} / ${{ matrix.configuration }}
     runs-on: macos-26
     env:
       DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode-version }}.app
@@ -76,6 +76,7 @@ jobs:
           - "26.2"
           - "26.3"
           - "26.4"
+          - "26.5"
         configuration:
           - debug
           - release

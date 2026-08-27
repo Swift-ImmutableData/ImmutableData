@@ -80,6 +80,7 @@ jobs:
           - "26.3"
           - "26.4"
           - "26.5"
+          - "26.6"
         configuration:
           - debug
           - release

@@ -20,7 +20,7 @@ import QuakesData
 import SwiftUI
 
 @MainActor struct PreviewStore<Content> where Content : View {
-  @State private var store: ImmutableData.Store<QuakesState, QuakesAction> = {
+  @State private var store: ImmutableData.Store<QuakesState, QuakesAction, QuakesReducer.Error> = {
     do {
       let store = ImmutableData.Store(
         initialState: QuakesState(),

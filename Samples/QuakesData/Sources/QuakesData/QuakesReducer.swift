@@ -18,7 +18,7 @@ public enum QuakesReducer {
   @Sendable public static func reduce(
     state: QuakesState,
     action: QuakesAction
-  ) throws -> QuakesState {
+  ) throws(QuakesReducer.Error) -> QuakesState {
     switch action {
     case .ui(.quakeList(action: let action)):
       return try self.reduce(state: state, action: action)
@@ -32,7 +32,7 @@ extension QuakesReducer {
   private static func reduce(
     state: QuakesState,
     action: QuakesAction.UI.QuakeList
-  ) throws -> QuakesState {
+  ) throws(QuakesReducer.Error) -> QuakesState {
     switch action {
     case .onAppear:
       return self.onAppear(state: state)
@@ -69,12 +69,12 @@ extension QuakesReducer {
 }
 
 extension QuakesReducer {
-  package struct Error: Swift.Error {
-    package enum Code: Hashable, Sendable {
+  public struct Error: Swift.Error {
+    public enum Code: Hashable, Sendable {
       case quakeNotFound
     }
     
-    package let code: Self.Code
+    public let code: Self.Code
   }
 }
 
@@ -82,7 +82,7 @@ extension QuakesReducer {
   private static func deleteSelectedQuake(
     state: QuakesState,
     quakeId: Quake.ID
-  ) throws -> QuakesState {
+  ) throws(QuakesReducer.Error) -> QuakesState {
     guard let _ = state.quakes.data[quakeId] else {
       throw Error(code: .quakeNotFound)
     }
@@ -104,7 +104,7 @@ extension QuakesReducer {
   private static func reduce(
     state: QuakesState,
     action: QuakesAction.Data.PersistentSession
-  ) throws -> QuakesState {
+  ) throws(QuakesReducer.Error) -> QuakesState {
     switch action {
     case .localStore(.didFetchQuakes(result: let result)):
       return self.didFetchQuakes(state: state, result: result)

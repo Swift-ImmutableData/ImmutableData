@@ -20,13 +20,13 @@ import ImmutableUI
 import SwiftUI
 
 @MainActor @propertyWrapper struct Dispatch : DynamicProperty {
-  @ImmutableUI.Dispatcher() private var dispatcher
-  
+  @ImmutableUI.Dispatcher<Store>() private var dispatcher
+
   init() {
     
   }
   
-  var wrappedValue: (CounterAction) throws -> () {
+  var wrappedValue: (CounterAction) -> () {
     self.dispatcher.dispatch
   }
 }

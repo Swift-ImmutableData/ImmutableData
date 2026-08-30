@@ -26,7 +26,7 @@ import SwiftUI
     
   }
   
-  var wrappedValue: (QuakesAction) throws -> Void {
+  var wrappedValue: (QuakesAction) throws(QuakesReducer.Error) -> Void {
     self.dispatcher.dispatch
   }
 }
